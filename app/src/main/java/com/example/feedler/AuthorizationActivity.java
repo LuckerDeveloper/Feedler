@@ -31,14 +31,14 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.authButtonVK:
-                if (VKSdk.isLoggedIn()) {
-                    Toast.makeText(getApplicationContext(),"Регистрация уже произведена",Toast.LENGTH_LONG).show();
-                } else {
-                    VKSdk.login(this, scope);
-                }
+                VKSdk.login(this, scope);
+                Intent intentVK = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intentVK);
                 break;
             case R.id.authButtonFB:
                 //Регистрация в Facebook
+                Intent intentFB = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intentFB);
                 break;
         }
 
