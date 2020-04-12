@@ -3,10 +3,13 @@ package com.example.feedler;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApiConst;
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     ArrayList<String> arrayList = new ArrayList<>();
     ArrayAdapter<String> arrayAdapter;
+    private PostViewModel model;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +41,25 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView);
 
-        //работа с arrayList
-
         arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(arrayAdapter);
+
+        model= ViewModelProviders.of(this).get(PostViewModel.class);
+
+
+        model.getAllPosts().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+
+                arrayList.addAll(strings);
+                Log.e("post", "onChanged "+arrayList.get(0));
+                arrayAdapter.notifyDataSetChanged();
+            }
+        });
+
+
+
+
 
 
 //       Это будет в другом файле
