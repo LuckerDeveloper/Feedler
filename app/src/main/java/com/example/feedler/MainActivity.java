@@ -4,6 +4,7 @@ package com.example.feedler;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,14 +36,18 @@ import java.util.Arrays;
 
 
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class MainActivity extends AppCompatActivity {
     ArrayList<String> arrayList = new ArrayList<>();
     RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+
+
 
         recyclerView = findViewById(R.id.listView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -54,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             Intent intent = new Intent(getApplicationContext(), AuthorizationActivity.class);
             startActivity(intent);
         }
-
-        //  listView = findViewById(R.id.listView);
 
         //работа с arrayList
 
@@ -83,11 +86,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
 
-    @Override
-    public void onRefresh() {
-
-    }
-
+  
 
     class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.MyViewHolder> {
 
