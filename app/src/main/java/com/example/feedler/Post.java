@@ -11,6 +11,10 @@ import java.text.DateFormat;
 public class Post {
 
     @PrimaryKey
+    @ColumnInfo(name = "id")
+    private int id;
+
+    @PrimaryKey
     @NonNull
     @ColumnInfo(name = "group_name")
     private String groupName;
@@ -25,10 +29,11 @@ public class Post {
     private String postText;
 
 
-    public Post(@NonNull String groupName, @NonNull String date, String postText ) {
+    public Post(@NonNull String groupName, @NonNull String date, String postText, int id ) {
         this.groupName = groupName;
         this.date=date;
         this.postText=postText;
+        this.id = id;
     }
 
     public String getGroupName(){
@@ -41,5 +46,9 @@ public class Post {
 
     public String getPostText(){
         return this.postText;
+    }
+
+    public int getId(){
+        return this.id;
     }
 }

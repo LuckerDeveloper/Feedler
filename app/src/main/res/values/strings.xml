@@ -4,4 +4,6 @@
     <string name="vk">Авторизация VK</string>
     <string name="fb">Авторизация FB</string>
     <string name="buttonList">Перейти к ленте</string>
+    <string name="in_vk">In VK</string>
+    <string name="in_facebook">In FaceBook</string>
 </resources>
