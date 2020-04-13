@@ -35,13 +35,10 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()) {
             case R.id.authButtonVK:
                 VKSdk.login(this, scope);
-                Intent intentVK = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intentVK);
                 break;
             case R.id.authButtonFB:
                 //Регистрация в Facebook
-                Intent intentFB = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intentFB);
+                
                 break;
         }
 
