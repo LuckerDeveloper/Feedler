@@ -10,14 +10,14 @@ import java.util.List;
 public class PostViewModel extends AndroidViewModel {
 
     private PostRepository postRepository;
-    private LiveData<ArrayList<String>> allPosts;
+    private LiveData<ArrayList<Post>> allPosts;
 
     public PostViewModel (Application application) {
         super(application);
         postRepository = new PostRepository(application);
     }
 
-    public LiveData<ArrayList<String>> getAllPosts() {
+    public LiveData<ArrayList<Post>> getAllPosts() {
         allPosts = postRepository.getAllPosts();
         return allPosts;
     }

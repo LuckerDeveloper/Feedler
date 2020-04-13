@@ -18,14 +18,14 @@ public class Post {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "data")
-    private DateFormat date;
+    private String date;
 
     @PrimaryKey
     @ColumnInfo(name = "text")
     private String postText;
 
 
-    public Post(@NonNull String groupName, @NonNull DateFormat date, String postText ) {
+    public Post(@NonNull String groupName, @NonNull String date, String postText ) {
         this.groupName = groupName;
         this.date=date;
         this.postText=postText;
@@ -35,7 +35,7 @@ public class Post {
         return this.groupName;
     }
 
-    public DateFormat getDate(){
+    public String getDate(){
         return this.date;
     }
 

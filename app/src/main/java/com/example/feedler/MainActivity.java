@@ -24,9 +24,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ListView listView;
-    ArrayList<String> arrayList = new ArrayList<>();
-    ArrayAdapter<String> arrayAdapter;
+
+    private ArrayList<Post> arrayList = new ArrayList<>();
     private PostViewModel model;
 
     @Override
@@ -39,21 +38,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        listView = findViewById(R.id.listView);
-
-        arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, arrayList);
-        listView.setAdapter(arrayAdapter);
-
         model= ViewModelProviders.of(this).get(PostViewModel.class);
 
 
-        model.getAllPosts().observe(this, new Observer<ArrayList<String>>() {
+        model.getAllPosts().observe(this, new Observer<ArrayList<Post>>() {
             @Override
-            public void onChanged(ArrayList<String> strings) {
-
-                arrayList.addAll(strings);
-                Log.e("post", "onChanged "+arrayList.get(0));
-                arrayAdapter.notifyDataSetChanged();
+            public void onChanged(ArrayList<Post> posts) {
+                arrayList.addAll(posts);
             }
         });
 

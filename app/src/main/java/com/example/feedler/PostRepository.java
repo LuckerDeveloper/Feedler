@@ -17,25 +17,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class PostRepository {
 
     private PostDao postDao;
-    private MutableLiveData<ArrayList<String>> liveDataArrayList;
-    private ArrayList<String> arrayList= new ArrayList<>();
+    private MutableLiveData<ArrayList<Post>> liveDataArrayList;
+
 
     PostRepository(Application application) {
     }
 
-    public LiveData<ArrayList<String>> getAllPosts(){
+    public LiveData<ArrayList<Post>> getAllPosts(){
+        return getLiveDataArrayListFromInternet();
+    }
 
-
-        liveDataArrayList = new MutableLiveData<>();
-        //нужно сделать новый метод загрузки
+    //Получение постов с сети
+    private MutableLiveData<ArrayList<Post>> getLiveDataArrayListFromInternet(){
+        final MutableLiveData<ArrayList<Post>> liveDataArrayList = new MutableLiveData<>();;
+        final ArrayList<Post> arrayList= new ArrayList<>();
 
         VKRequest request = new VKRequest("newsfeed.get", VKParameters.from(VKApiConst.FILTERS, "post")); //Запрос с фильтром pos
-
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -43,17 +48,39 @@ public class PostRepository {
                 try {
                     JSONObject jsonObject = (JSONObject) response.json.get("response");
                     JSONArray jsonArrayPost = (JSONArray) jsonObject.get("items");
-
+                    JSONArray jsonArrayGroup = (JSONArray) jsonObject.get("groups");
+                    JSONArray jsonArrayProfiles = (JSONArray) jsonObject.get("profiles");
 
                     for (int i = 0; i < jsonArrayPost.length(); i++) {
-                        JSONObject post = (JSONObject) jsonArrayPost.get(i);
-                        arrayList.add(post.getString("text"));
-                        Log.e("post", "name of group");
-                        int sourceId = post.getInt("source_id");
+                        JSONObject jsonObjectPost = (JSONObject) jsonArrayPost.get(i);
 
-                        String text = post.getString("text");
+                        String text = jsonObjectPost.getString("text");
+                        int sourceId = jsonObjectPost.getInt("source_id");
+                        String groupName = null;
+                        long  dateInMillis=  jsonObjectPost.getLong("date");
+                        String date = dateToString(dateInMillis);
 
-                        Log.e("post", ""+i+sourceId+" "+ text);
+                        //получение имени источника
+                        if (sourceId>0){
+                            for (int j=0 ; j< jsonArrayProfiles.length(); j++){
+                                JSONObject profile = (JSONObject) jsonArrayProfiles.get(j);
+                                if (sourceId==profile.getInt("id")){
+                                    String firstName = profile.getString("first_name");
+                                    String lastName= profile.getString("last_name");
+                                    groupName = firstName + " "+ lastName;
+                                }
+                            }
+                        } else {
+                            for (int j =0; j< jsonArrayGroup.length(); j++ ){
+                                JSONObject group = (JSONObject) jsonArrayGroup.get(j);
+                                if (sourceId*(-1)==group.getInt("id")){
+                                    groupName=group.getString("name");
+                                }
+                            }
+                        }
+
+                        Post post=new Post(groupName, date, text );
+                        arrayList.add(post);
                     }
                     liveDataArrayList.postValue(arrayList);
                 } catch (JSONException e) {
@@ -64,5 +91,21 @@ public class PostRepository {
         return liveDataArrayList;
     }
 
+    private String dateToString(long dateInMillis){
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(1000*dateInMillis);
+        String day = getRightStringNum(calendar.get(Calendar.DAY_OF_MONTH));
+        String month = getRightStringNum (calendar.get(Calendar.MONTH)+1);     //не понятно, почему ставит не тот месяц
+        String year = getRightStringNum( calendar.get(Calendar.YEAR));
+        String hour = getRightStringNum( calendar.get(Calendar.HOUR_OF_DAY));
+        String minute = getRightStringNum(calendar.get(Calendar.MINUTE));
+        String dateString= day+"."+month+"."+ year+ " "+ hour+":"+minute;
+        return dateString;
+    }
 
+    private String getRightStringNum(int num){
+        if (num<10){
+            return "0"+num;
+        } else return ""+num;
+    }
 }
