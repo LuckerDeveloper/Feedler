@@ -4,12 +4,12 @@ package com.example.feedler;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,7 @@ import com.vk.sdk.util.VKUtil;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,20 +36,20 @@ import java.util.Arrays;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
+
+
     ArrayList<String> arrayList = new ArrayList<>();
     RecyclerView recyclerView;
-
-
+    TextView mShare;
+    public static final String MY_EXTRA ="my_extra";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-
-
-
-        recyclerView = findViewById(R.id.listView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
@@ -60,10 +60,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        //работа с arrayList
-
-
-//       Это будет в другом файле
         VKRequest request = new VKRequest("newsfeed.get", VKParameters.from(VKApiConst.FILTERS, "post")); //Запрос с фильтром post
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -86,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-  
 
     class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.MyViewHolder> {
 
@@ -120,8 +115,40 @@ public class MainActivity extends AppCompatActivity {
 
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
-                mTextView = itemView.findViewById(R.id.window);
+                mTextView = itemView.findViewById(R.id.postText);
+                mShare = itemView.findViewById(R.id.share);
+
+                //пересылка поста
+                mShare.setOnClickListener(v->{
+                    int pos = getAdapterPosition();
+                    String soob = arrayList.get(pos);
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, soob);
+                    String chooserTitle = getString(R.string.chooser);
+                    Intent chosenIntent = Intent.createChooser(intent, chooserTitle);
+                    startActivity(chosenIntent);
+            });
+
+
+
             }
+        }
+    }
+
+    @Override   //Меню на панели приложения
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Настройки");
+        menu.add("Авторизация");
+        menu.add("Выход");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override  //обработка действий при нажатии
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

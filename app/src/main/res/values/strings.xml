@@ -6,4 +6,6 @@
     <string name="buttonList">Перейти к ленте</string>
     <string name="in_vk">In VK</string>
     <string name="in_facebook">In FaceBook</string>
+    <string name="feedler">Feedler</string>
+    <string name="chooser" />
 </resources>
