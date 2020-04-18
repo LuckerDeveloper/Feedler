@@ -5,10 +5,13 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
-import java.text.DateFormat;
 
 @Entity(tableName = "post_table")
 public class Post {
+
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private int id;
 
     @PrimaryKey
     @NonNull
@@ -18,28 +21,35 @@ public class Post {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "data")
-    private DateFormat date;
+    private String date;
 
     @PrimaryKey
     @ColumnInfo(name = "text")
     private String postText;
 
 
-    public Post(@NonNull String groupName, @NonNull DateFormat date, String postText ) {
+    public Post(@NonNull String groupName, @NonNull String date, String postText, int id ) {
         this.groupName = groupName;
         this.date=date;
         this.postText=postText;
+        this.id = id;
     }
+
+
 
     public String getGroupName(){
         return this.groupName;
     }
 
-    public DateFormat getDate(){
+    public String getDate(){
         return this.date;
     }
 
     public String getPostText(){
         return this.postText;
+    }
+
+    public int getId(){
+        return this.id;
     }
 }

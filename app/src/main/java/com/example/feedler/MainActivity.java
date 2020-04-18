@@ -1,140 +1,27 @@
 package com.example.feedler;
 
-
 import android.content.Intent;
 import android.os.Bundle;
-
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
-
-import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.util.VKUtil;
-
+import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.feedler.PagedList.PostAdapter;
+import com.vk.sdk.VKSdk;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-
-
-public class MainActivity extends AppCompatActivity  {
-
-
-    ArrayList<String> arrayList = new ArrayList<>();
+public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    TextView mShare;
-    public static final String MY_EXTRA ="my_extra";
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+    PostAdapter adapter = new PostAdapter(new PostRepository.PostDiffUtilCallback());
+    PostRepository.PostDiffUtilCallback diffUtilCallback;
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        System.out.println(Arrays.toString(fingerprints));
-
-        if (!VKSdk.isLoggedIn()) {
-            Intent intent = new Intent(getApplicationContext(), AuthorizationActivity.class);
-            startActivity(intent);
-        }
-
-        VKRequest request = new VKRequest("newsfeed.get", VKParameters.from(VKApiConst.FILTERS, "post")); //Запрос с фильтром post
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-
-                try {
-                    JSONObject jsonObject = (JSONObject) response.json.get("response"); //получаем JSON объект по запросу
-                    JSONArray jsonArray = (JSONArray) jsonObject.get("items"); //Получаем конкретно посты
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject post = (JSONObject) jsonArray.get(i);
-                        arrayList.add(post.getString("text")); //Производим перебор и получаем то, что является телом поста
-                    }
-                    MyDataAdapter adapter = new MyDataAdapter(arrayList);
-                    recyclerView.setAdapter(adapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-
-    class MyDataAdapter extends RecyclerView.Adapter<MyDataAdapter.MyViewHolder> {
-
-       private  ArrayList<String> arrayList;
-
-        public MyDataAdapter(ArrayList<String> data) {
-            this.arrayList = data;
-        }
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_window, parent, false);
-            return new MyViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            holder.mTextView.setText(arrayList.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return arrayList.size();
-        }
-
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-
-            final TextView mTextView;
-
-            public MyViewHolder(@NonNull View itemView) {
-                super(itemView);
-                mTextView = itemView.findViewById(R.id.postText);
-                mShare = itemView.findViewById(R.id.share);
-
-                //пересылка поста
-                mShare.setOnClickListener(v->{
-                    int pos = getAdapterPosition();
-                    String soob = arrayList.get(pos);
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_TEXT, soob);
-                    String chooserTitle = getString(R.string.chooser);
-                    Intent chosenIntent = Intent.createChooser(intent, chooserTitle);
-                    startActivity(chosenIntent);
-            });
-
-
-
-            }
-        }
-    }
+    private PostViewModel model;
 
     @Override   //Меню на панели приложения
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,6 +37,32 @@ public class MainActivity extends AppCompatActivity  {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
+
+        if (!VKSdk.isLoggedIn()) {
+            Intent intent = new Intent(getApplicationContext(), AuthorizationActivity.class);
+            startActivity(intent);
+        }
+        recyclerView = findViewById(R.id.recyclerView);
+
+        model= ViewModelProviders.of(this).get(PostViewModel.class);
+
+        adapter = new PostAdapter(diffUtilCallback);
+
+        model.getAllPosts().observe(this, new Observer<PagedList<Post>>() {
+            @Override
+            public void onChanged(PagedList<Post> posts) {
+                adapter.submitList(posts);
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.setAdapter(adapter);
     }
 }
 

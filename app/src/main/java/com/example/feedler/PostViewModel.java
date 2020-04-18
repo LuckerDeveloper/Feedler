@@ -3,20 +3,36 @@ package com.example.feedler;
 import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
-import java.util.List;
+import com.example.feedler.PagedList.MySourceFactory;
+
+
+import java.util.concurrent.Executors;
 
 public class PostViewModel extends AndroidViewModel {
 
     private PostRepository postRepository;
-    private LiveData<List<Post>> allPosts;
+    private LiveData<PagedList<Post>> allPosts;
 
     public PostViewModel (Application application) {
         super(application);
-        postRepository = new PostRepository(application);
-        allPosts = postRepository.getAllPosts();
+        postRepository = new PostRepository();
     }
 
-    LiveData<List<Post>> getAllPosts() { return allPosts; }
+    public LiveData<PagedList<Post>> getAllPosts() {
+        MySourceFactory sourceFactory = new MySourceFactory(new PostRepository());
+
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPageSize(10)
+                .build();
+
+        allPosts = new LivePagedListBuilder<>(sourceFactory, config)
+                .setFetchExecutor(Executors.newSingleThreadExecutor())
+                .build();
+        return allPosts;
+    }
 
 }

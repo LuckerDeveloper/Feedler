@@ -29,7 +29,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="40dp"
             android:orientation="vertical">
 
             <TextView
@@ -51,6 +52,14 @@
             </TextView>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/favorite"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+
+            ></TextView>
+
     </LinearLayout>
 
     <ImageView
@@ -82,8 +91,7 @@
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:background="@drawable/circle"
-            android:drawableStart="@drawable/favorite"
-            />
+            android:drawableStart="@drawable/grade" />
 
         <TextView
             android:id="@+id/likesCount"
@@ -92,7 +100,7 @@
             android:background="@drawable/circle"
             android:text="1000"
             android:textStyle="normal|bold|italic"
-            android:paddingTop="3dp"
+            android:paddingTop="4dp"
             android:layout_marginLeft="10dp"
             />
 
@@ -102,7 +110,8 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="260dp"
             android:background="@drawable/circle"
-            android:drawableRight="@drawable/ic_share_black_24dp" />
+            android:drawableRight="@drawable/ic_share_black_24dp"
+            />
 
 </LinearLayout>
 
