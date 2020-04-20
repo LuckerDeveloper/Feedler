@@ -14,9 +14,9 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         super(view);
         postText = (TextView) view.findViewById(R.id.postText);
 
-
     }
     public void bind(Post post) {
         postText.setText(post.getPostText());
+
     }
 }

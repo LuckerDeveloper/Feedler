@@ -1,54 +1,56 @@
 package com.example.feedler.PagedList;
 
+import android.content.Context;
+import android.net.sip.SipSession;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.paging.PositionalDataSource;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
+import com.example.feedler.Application;
 import com.example.feedler.Post;
-import com.example.feedler.PostRepository;
+import com.example.feedler.PostDao;
+import com.example.feedler.PostRoomDatabase;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class MyPositionalDataSource extends PositionalDataSource<Post> {
+public class MyPositionalDataSource extends PositionalDataSource<Post>{
 
-    private final PostRepository postStorage;
 
-    protected String mNextFrom = null;
+    private final Context context;
 
-    public MyPositionalDataSource(PostRepository postStorage) {
-        this.postStorage = postStorage;
+
+
+    public MyPositionalDataSource(Context context) {
+
+        this.context = context;
+
     }
 
     @Override
     public void loadInitial(final @NonNull LoadInitialParams params, final @NonNull LoadInitialCallback<Post> callback) {
-        Log.d("MyPositionalDataSource", "loadInitial");
-        final PostRepository.Callback<List<Post>> postCallback = new PostRepository.Callback<List<Post>>() {
-            @Override
-            public void onResult(String nextFrom, List<Post> result, Throwable error) {
-                mNextFrom = nextFrom;
-                callback.onResult(result, params.requestedStartPosition);
-            }
-        };
-
-        Log.d("MyPositionalDataSource", String.format("load(%s, %s)", mNextFrom, params.requestedLoadSize));
-        postStorage.getData(mNextFrom, params.requestedLoadSize, postCallback);
+        List<Post> result = new ArrayList<>();
+        PostRoomDatabase db = PostRoomDatabase.getDatabase(context);
+        PostDao postDao = db.postDao();
+        result = postDao.findPostsBetween(params.requestedStartPosition,(params.requestedStartPosition+ params.requestedLoadSize));
+        callback.onResult(result, 0);
 
     }
 
     @Override
     public void loadRange(@NonNull LoadRangeParams params, final @NonNull LoadRangeCallback<Post> callback) {
-        Log.d("MyPositionalDataSource", "loadRange");
-        final PostRepository.Callback<List<Post>> postCallback = new PostRepository.Callback<List<Post>>() {
-            @Override
-            public void onResult(String nextFrom, List<Post> result, Throwable error) {
-                mNextFrom = nextFrom;
-                callback.onResult(result);
-            }
-        };
+        List<Post> result = new ArrayList<>();
+        PostRoomDatabase db = PostRoomDatabase.getDatabase(context);
+        PostDao postDao = db.postDao();
+        result = postDao.findPostsBetween(params.startPosition, params.startPosition+params.loadSize);
 
+        callback.onResult(result);
 
-        Log.d("MyPositionalDataSource", String.format("load(%s, %s)", mNextFrom, params.loadSize));
-        postStorage.getData(mNextFrom, params.loadSize, postCallback);
     }
+
 }

@@ -8,16 +8,21 @@
     tools:context=".MainActivity"
     android:id="@+id/swipe"
     >
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         style="@style/Widget.AppCompat.ListView.DropDown"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:divider="@drawable/vk_gray_transparent_shape"
         >
     </androidx.recyclerview.widget.RecyclerView>
 
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </LinearLayout>
