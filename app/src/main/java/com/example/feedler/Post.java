@@ -11,22 +11,21 @@ import java.text.DateFormat;
 public class Post {
 
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    private int id;
+    public int id;
 
-    @PrimaryKey
+
     @NonNull
     @ColumnInfo(name = "group_name")
-    private String groupName;
+    public String groupName;
 
-    @PrimaryKey
+
     @NonNull
-    @ColumnInfo(name = "data")
-    private String date;
+    @ColumnInfo(name = "date")
+    public String date;
 
-    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "text")
-    private String postText;
+    public String postText;
 
 
     public Post(@NonNull String groupName, @NonNull String date, String postText, int id ) {

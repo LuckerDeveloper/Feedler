@@ -38,7 +38,7 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.authButtonFB:
                 //Регистрация в Facebook
-                
+
                 break;
         }
 
