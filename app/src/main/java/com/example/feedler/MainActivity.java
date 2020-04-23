@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.srl_container);
+        final SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.srl_container);
 
         recyclerView = findViewById(R.id.recyclerView);
 
