@@ -3,6 +3,7 @@ package com.example.feedler;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,21 +24,48 @@ public class MainActivity extends AppCompatActivity {
 
     private PostViewModel model;
 
-    @Override   //Меню на панели приложения
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add("Настройки");
-        menu.add("Авторизация");
-        menu.add("Выход");
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
     }
 
-    @Override  //обработка действий при нажатии
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
         switch (item.getItemId()) {
+            case R.id.action_favorite:
+            {
+            Intent intent = new Intent(MainActivity.this, PostActivity.class);
+            startActivity(intent);
+            }
+                return true;
+            case R.id.action_refresh:
+            {
+                //метод для обновления данных
+            }
+            case R.id.action_settings:
+            {
+                //меню настроек
+            }
+                return true;
+            case R.id.authorization:
+            {
+                //меню авторизации
+            }
+            case R.id.exit:
+            {
+                //меню выхода
+                 }
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

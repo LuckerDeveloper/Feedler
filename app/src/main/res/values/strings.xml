@@ -4,9 +4,13 @@
     <string name="vk">Авторизация VK</string>
     <string name="fb">Авторизация FB</string>
     <string name="buttonList">Перейти к ленте</string>
-    <string name="in_vk">In VK</string>
-    <string name="in_facebook">In FaceBook</string>
+    <string name="in_vk">VK</string>
+    <string name="in_facebook">FaceBook</string>
     <string name="feedler">Feedler</string>
-    <string name="chooser"
-        />
+    <string name="chooser" />
+    <string name="Favor">Избранное</string>
+    <string name="Settings">Настройки</string>
+    <string name="Auth">Авторизация</string>
+    <string name="Exit">Выход</string>
+    <string name="Refresh">Обновить</string>
 </resources>

@@ -6,5 +6,6 @@
     <color name="Red">#D51515</color>
     <color name="White">#FFFFFF</color>
     <color name="DarkGray">#333333</color>
-    <color name="DarkPetronasColor">#19403F</color>
+    <color name="DarkPetronasColor">#163A3A</color>
+    <color name="BlackDarkPetronasColor">#0A1C1C</color>
 </resources>
