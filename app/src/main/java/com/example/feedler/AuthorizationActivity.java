@@ -2,8 +2,7 @@ package com.example.feedler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,8 +28,10 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
 
         authButtonVK.setOnClickListener(this);
         authButtonFB.setOnClickListener(this);
+
+
     }
-    @Override
+   @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.authButtonVK:
@@ -38,7 +39,7 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.authButtonFB:
                 //Регистрация в Facebook
-                
+
                 break;
         }
 
@@ -64,4 +65,6 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+
 }
