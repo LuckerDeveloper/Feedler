@@ -11,9 +11,6 @@ import com.vk.sdk.VKSdk;
 
 public class Application extends android.app.Application {
 
-    private PostRoomDatabase postRoomDatabase;
-    private FavoriteDatabase favoriteDatabase;
-    public static Application instance;
 
     VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
@@ -31,24 +28,5 @@ public class Application extends android.app.Application {
         super.onCreate();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
-
-        instance = this;
-        postRoomDatabase= Room.databaseBuilder(this, PostRoomDatabase.class, "post_database")
-                .allowMainThreadQueries()
-                .build();
-
-        favoriteDatabase= Room.databaseBuilder(this, FavoriteDatabase.class, "favorite_database")
-                .allowMainThreadQueries()
-                .build();
     }
-
-    public static Application getInstance(){
-        return instance;
-    }
-
-    public PostRoomDatabase getPostRoomDatabase() {
-        return postRoomDatabase;
-    }
-
-    public  FavoriteDatabase getFavoriteDatabase(){ return favoriteDatabase;}
 }

@@ -22,4 +22,5 @@ public interface PostDao {
 
     @Query("SELECT * FROM POST_TABLE WHERE id> :mId")
     List<Post> getAfterId(int mId);
+
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Favorites.FavoriteActivity"
+    android:id="@+id/swipe_container"
+    android:background="#FFFFFF"
+    >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:background="#FFFFFF"
+            android:id="@+id/recyclerViewFavorite"
+            style="@style/Widget.AppCompat.ListView.DropDown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/vk_gray_transparent_shape"
+            />
+
+
+</LinearLayout>

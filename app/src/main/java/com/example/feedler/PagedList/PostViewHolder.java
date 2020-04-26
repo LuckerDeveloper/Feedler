@@ -1,5 +1,6 @@
 package com.example.feedler.PagedList;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
@@ -13,21 +14,20 @@ import com.example.feedler.R;
 import java.util.ArrayList;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
-    TextView postText;
-    TextView mShare;
-    Button favorite;
-    ArrayList<String> arrayList = new ArrayList<>();
-    boolean addTo;
+    private TextView postText;
+    private TextView mShare;
+    private TextView dataText;
+    private TextView groupName;
+    public Button favorite;
+    private ArrayList<String> arrayList = new ArrayList<>();
 
    public PostViewHolder(View view) {
         super(view);
-        postText = (TextView) view.findViewById(R.id.postText);
-
-        mShare = (TextView) view.findViewById(R.id.share);
-        favorite = (Button) view.findViewById(R.id.favoriteButton);
-
-        favorite.setOnClickListener(this::onClickToFavorite);
-       favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade_empty));
+        postText =  view.findViewById(R.id.postText);
+        dataText = view.findViewById(R.id.postTime);
+        groupName= view.findViewById(R.id.groupName);
+        mShare = view.findViewById(R.id.share);
+        favorite = view.findViewById(R.id.favoriteButton);
 
         mShare.setOnClickListener(v -> {
             int pos = getAdapterPosition();
@@ -41,20 +41,18 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    private void onClickToFavorite(View view) {
-       if (addTo==false) {
-           favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade));
-           addTo = true;
-       }
-      else  {
-          favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade_empty));
-           addTo = false;
-      }
-    }
-
-
     public void bind(Post post) {
         postText.setText(post.getPostText());
+        dataText.setText(post.getDate());
+        groupName.setText(post.getGroupName());
         arrayList.add(post.getPostText());
+        if (post.favorite){
+            favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade));
+        } else {
+            favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade_empty));
+        }
+
+
     }
+
 }

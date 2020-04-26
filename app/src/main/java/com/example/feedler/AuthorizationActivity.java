@@ -3,6 +3,7 @@ package com.example.feedler;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,11 +36,14 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.authButtonVK:
-                VKSdk.login(this, scope);
+                if (VKSdk.isLoggedIn()) {
+                    Toast.makeText(getApplicationContext(),"Регистрация уже произведена",Toast.LENGTH_LONG).show();
+                } else {
+                    VKSdk.login(this, scope);
+                }
                 break;
             case R.id.authButtonFB:
-                //Регистрация в Facebook
-
+                Toast.makeText(getApplicationContext(),"Авторизация в Facebook пока не доступна",Toast.LENGTH_LONG).show();
                 break;
         }
 

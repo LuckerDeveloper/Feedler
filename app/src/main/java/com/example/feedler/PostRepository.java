@@ -1,11 +1,8 @@
 package com.example.feedler;
 
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.example.feedler.Favorites.FavoriteDatabase;
@@ -22,11 +19,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 public class PostRepository {
     public interface Callback<R> {
@@ -34,9 +32,12 @@ public class PostRepository {
     }
 
     private PostRoomDatabase postRoomDatabase;
+    private FavoriteDatabase favoriteDatabase;
     private List<Post> list;
 
-    PostRepository() {
+    PostRepository(android.app.Application application) {
+        postRoomDatabase= PostRoomDatabase.getDatabase(application);
+        favoriteDatabase= FavoriteDatabase.getDatabase(application);
     }
 
 
@@ -49,9 +50,6 @@ public class PostRepository {
         if (startFrom != null) {
             paramsMap.put("start_from", startFrom);
         }
-
-        postRoomDatabase= Application.getInstance().getPostRoomDatabase();
-
         final VKParameters params = new VKParameters(paramsMap);
         VKRequest request = new VKRequest("newsfeed.get", params); //Запрос с фильтром params
         request.executeWithListener(new VKRequest.VKRequestListener() {
@@ -97,16 +95,22 @@ public class PostRepository {
                     }
 
                     List<Post> postList= new ArrayList<>();
-                    for(int j=0 ;j<list.size(); j++){
-                        Post postFromNet=list.get(j);
-                        Post postDB= new Post(postFromNet.getGroupName(), postFromNet.getDate(), postFromNet.getPostText(), j);
-                        postList.add(postDB);
-                    }
+                    AppExecutors.getInstance().postDatabaseExrcutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            for(int j=0 ;j<list.size(); j++){
+                                Post postFromNet=list.get(j);
+                                Post postDB= new Post(postFromNet.getGroupName(), postFromNet.getDate(), postFromNet.getPostText(), j);
+                                postList.add(postDB);
+                            }
 
-                    if (startFrom==null){
-                        postRoomDatabase.postDao().deleteALL();
-                        postRoomDatabase.postDao().insertAll(postList);
-                    }
+                            if (startFrom==null){
+                                postRoomDatabase.postDao().deleteALL();
+                                postRoomDatabase.postDao().insertAll(postList);
+                            }
+                        }
+                    });
+
 
                     final String nextFrom = jsonObject.optString("next_from");
                     callback.onResult(nextFrom, list, null);
@@ -120,27 +124,32 @@ public class PostRepository {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-
-                int startFromInt;
-                if(startFrom==null) {
-                    startFromInt = 0 ;
-                    list=postRoomDatabase.postDao().getAfterId(startFromInt);
-                    if(list.size()!=0){
-                        String nextFrom = ""+list.get(list.size()-1).id;
-                        callback.onResult(nextFrom, list, null);
-                    }
-                } else{
-                    try {
-                        startFromInt=Integer.parseInt(startFrom);
-                        list=postRoomDatabase.postDao().getAfterId(startFromInt);
-                        if(list.size()!=0){
-                            String nextFrom = ""+list.get(list.size()-1).id;
-                            callback.onResult(nextFrom, list, null);
+                AppExecutors.getInstance().postDatabaseExrcutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        int startFromInt;
+                        if(startFrom==null) {
+                            startFromInt = 0 ;
+                            list=postRoomDatabase.postDao().getAfterId(startFromInt);
+                            if(list.size()!=0){
+                                String nextFrom = ""+list.get(list.size()-1).id;
+                                callback.onResult(nextFrom, list, null);
+                            }
+                        } else{
+                            try {
+                                startFromInt=Integer.parseInt(startFrom);
+                                list=postRoomDatabase.postDao().getAfterId(startFromInt);
+                                if(list.size()!=0){
+                                    String nextFrom = ""+list.get(list.size()-1).id;
+                                    callback.onResult(nextFrom, list, null);
+                                }
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
-                    } catch (Exception e){
-                        e.printStackTrace();
                     }
-                }
+                });
+
             }
         });
     }
@@ -164,23 +173,74 @@ public class PostRepository {
     }
 
     public List<Post> getFavoritePost(){
-        FavoriteDatabase favoriteDatabase= com.example.feedler.Application.getInstance().getFavoriteDatabase();
-        FavoritesDao favoritesDao = favoriteDatabase.favoritesDao();
-        List<Post> posts= favoritesDao.getAll();
-        return posts;
+        GetFavoritePostRunnable getFavoritePostRunnable = new GetFavoritePostRunnable(favoriteDatabase);
+        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(getFavoritePostRunnable);
+        try {
+            AppExecutors.getInstance().favoriteDatabaseExrcutor().awaitTermination(500, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return getFavoritePostRunnable.getPosts();
     }
 
     public void insertFavorite(Post post){
-        FavoriteDatabase db= com.example.feedler.Application.getInstance().getFavoriteDatabase();
-        FavoritesDao favoritesDao = db.favoritesDao();
-        favoritesDao.insert(post);
+        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                FavoritesDao favoritesDao = favoriteDatabase.favoritesDao();
+                favoritesDao.insert(post);
+            }
+        });
     }
 
     public void deleteFavorite(Post post){
-        FavoriteDatabase db= com.example.feedler.Application.getInstance().getFavoriteDatabase();
-        FavoritesDao favoritesDao = db.favoritesDao();
-        favoritesDao.delete(post);
+        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                FavoritesDao favoritesDao = favoriteDatabase.favoritesDao();
+                favoritesDao.delete(post);
+            }
+        });
     }
+
+    public void deleteFavoriteAll(){
+        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                FavoritesDao favoritesDao = favoriteDatabase.favoritesDao();
+                favoritesDao.deleteAll();
+            }
+        });
+    }
+
+    public void replaceFavoriteVar(Post post){
+        post.favorite=!post.favorite;
+        insertFavorite(post);
+    }
+
+
+
+
+
+    private class GetFavoritePostRunnable implements Runnable {
+        private FavoriteDatabase favoriteDatabase;
+        private List<Post> posts ;
+
+        public GetFavoritePostRunnable(FavoriteDatabase favoriteDatabase) {
+            this.favoriteDatabase = favoriteDatabase;
+        }
+
+        public synchronized List<Post> getPosts() {
+            return posts;
+        }
+
+        @Override
+        public void run() {
+            FavoritesDao favoritesDao = favoriteDatabase.favoritesDao();
+            posts= favoritesDao.getAll();
+        }
+    }
+
 
     public static class PostDiffUtilCallback extends DiffUtil.ItemCallback<Post> {
 

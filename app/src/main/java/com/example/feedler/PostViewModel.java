@@ -19,11 +19,11 @@ public class PostViewModel extends AndroidViewModel {
 
     public PostViewModel (Application application) {
         super(application);
-        postRepository = new PostRepository();
+        postRepository = new PostRepository(application);
     }
 
     LiveData<PagedList<Post>> getAllPosts() {
-        MySourceFactory sourceFactory = new MySourceFactory(new PostRepository());
+        MySourceFactory sourceFactory = new MySourceFactory(postRepository);
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -40,8 +40,12 @@ public class PostViewModel extends AndroidViewModel {
         postRepository.insertFavorite(post);
     }
 
-    List<Post> getFavoritePost(){return postRepository.getFavoritePost();}
+    public List<Post> getFavoritePost(){return postRepository.getFavoritePost();}
 
     public void deleteFavorite(Post post) {postRepository.deleteFavorite(post);}
+
+    public void deleteFavoriteAll(){postRepository.deleteFavoriteAll();}
+
+    public void replaceFavoriteVar(Post post){postRepository.replaceFavoriteVar(post);}
 
 }
