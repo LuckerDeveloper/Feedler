@@ -2,6 +2,7 @@ package com.example.feedler;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
@@ -12,28 +13,30 @@ public class Post {
 
     @PrimaryKey
     @ColumnInfo(name = "id")
-    private int id;
+    public int id;
 
-    @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "group_name")
     private String groupName;
 
-    @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "data")
     private String date;
 
-    @PrimaryKey
     @ColumnInfo(name = "text")
     private String postText;
 
 
-    public Post(@NonNull String groupName, @NonNull String date, String postText, int id ) {
+//    public Post(@NonNull String groupName, @NonNull String date, String postText) {
+//        this.groupName = groupName;
+//        this.date=date;
+//        this.postText=postText;
+//    }
+
+//    @Ignore
+    public Post(@NonNull String groupName, @NonNull String date, String postText, int id) {
         this.groupName = groupName;
         this.date=date;
         this.postText=postText;
-        this.id = id;
+        this.id=id;
     }
 
     public String getGroupName(){
@@ -48,7 +51,4 @@ public class Post {
         return this.postText;
     }
 
-    public int getId(){
-        return this.id;
-    }
 }

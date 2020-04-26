@@ -9,6 +9,7 @@ import androidx.paging.PagedList;
 import com.example.feedler.PagedList.MySourceFactory;
 
 
+import java.util.List;
 import java.util.concurrent.Executors;
 
 public class PostViewModel extends AndroidViewModel {
@@ -21,7 +22,7 @@ public class PostViewModel extends AndroidViewModel {
         postRepository = new PostRepository();
     }
 
-    public LiveData<PagedList<Post>> getAllPosts() {
+    LiveData<PagedList<Post>> getAllPosts() {
         MySourceFactory sourceFactory = new MySourceFactory(new PostRepository());
 
         PagedList.Config config = new PagedList.Config.Builder()
@@ -34,5 +35,13 @@ public class PostViewModel extends AndroidViewModel {
                 .build();
         return allPosts;
     }
+
+    public void insertFavorite(Post post) {
+        postRepository.insertFavorite(post);
+    }
+
+    List<Post> getFavoritePost(){return postRepository.getFavoritePost();}
+
+    public void deleteFavorite(Post post) {postRepository.deleteFavorite(post);}
 
 }

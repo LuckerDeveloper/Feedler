@@ -8,15 +8,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.feedler.Post;
 import com.example.feedler.R;
 
-public class PostViewHolder extends RecyclerView.ViewHolder {
-    final TextView postText;
+class PostViewHolder extends RecyclerView.ViewHolder {
+    final private TextView postText;
     PostViewHolder(View view){
         super(view);
-        postText = (TextView) view.findViewById(R.id.postText);
+        postText = view.findViewById(R.id.postText);
 
 
     }
-    public void bind(Post post) {
-        postText.setText(post.getPostText());
+    void bind(Post post) {
+        postText.setText(post.getDate()+' '+post.getGroupName());
     }
 }
