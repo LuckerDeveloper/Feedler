@@ -29,7 +29,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         favorite = view.findViewById(R.id.favoriteButton);
 
         mShare.setOnClickListener(v -> {
-            String textPost = arrayList.get(0);
+            int position = getAdapterPosition()/6;
+            String textPost = arrayList.get(position);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, textPost);
