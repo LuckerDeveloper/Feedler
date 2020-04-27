@@ -47,7 +47,11 @@ public class PostAdapter extends PagedListAdapter<Post, PostViewHolder> {
                 post.favorite = true;
                 listener.insertFavorite(post);
             }
+
+
         });
+
+
     }
 
     public interface Listener{
