@@ -1,5 +1,6 @@
 package com.example.feedler.Favorites;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.feedler.AppExecutors;
 import com.example.feedler.MainActivity;
 import com.example.feedler.PagedList.PostAdapter;
 import com.example.feedler.Post;
@@ -23,9 +25,10 @@ import com.example.feedler.PostRepository;
 import com.example.feedler.PostViewModel;
 import com.example.feedler.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class FavoriteActivity extends AppCompatActivity implements PostAdapter.Listener {
+public class FavoriteActivity extends AppCompatActivity implements PostAdapter.Listener , PostRepository.FavoriteCallBack {
 
     RecyclerView recyclerView;
     FavoriteAdapter adapter;
@@ -37,17 +40,14 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.favorite_list);
 
-        recyclerView = findViewById(R.id.recyclerViewFavorite);
-
         model= new ViewModelProvider(this).get(PostViewModel.class);
-        posts=model.getFavoritePost();
-        adapter = new FavoriteAdapter(this, posts);
+        model.getFavoritePost(this);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView = findViewById(R.id.recyclerViewFavorite);
+        adapter = new FavoriteAdapter(this);
         recyclerView.setAdapter(adapter);
-
-
-
+        adapter.setPosts(posts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -63,7 +63,6 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
             case R.id.action_delete_all:
             {
                 model.deleteFavoriteAll();
-                posts.clear();
                 Intent intent=new Intent(this, MainActivity.class);
                 startActivity(intent);
             }
@@ -79,32 +78,36 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
     }
 
     @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     public void insertFavorite(Post post) {
-        List<Post> postList=model.getFavoritePost();
-        if (postList.size()!=0) {
-            post.id=postList.get(postList.size()-1).id+1;
-        } else {
-            post.id=0;
-        }
         model.insertFavorite(post);
     }
 
     @Override
     public void deleteFavorite(Post post) {
-        List<Post> favoritePost = model.getFavoritePost();
-        if(favoritePost!=null){
-            for (int i =0 ; i<favoritePost.size(); i++){
-                if ( post.isEquals(favoritePost.get(i)) ){
-                    model.deleteFavorite(favoritePost.get(i));
-                    break;
-                }
-            }
-        }
+        model.deleteFavorite(post);
+    }
+
+    @Override
+    public void onSuccess(Object result) {
+        posts= (List<Post>) result;
+        adapter.setPosts(posts);
 
     }
 
     @Override
-    public void replaceFavoriteVar(Post post) {
-        model.replaceFavoriteVar(post);
+    public void onFail() {
+        AppExecutors.getInstance().mainThread().execute(() -> Toast.makeText(getApplicationContext(),
+                "Сохраненные посты отсутствуют",
+                Toast.LENGTH_SHORT).show());
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
+
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.feedler">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -12,8 +13,13 @@
         android:name=".Application"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        android:screenOrientation="portrait">
+
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,9 +30,14 @@
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
-        <activity android:name=".AuthorizationActivity"></activity>
+        <activity
+            android:name=".AuthorizationActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity android:name=".PostActivity"/>
-        <activity android:name=".Favorites.FavoriteActivity"/>
+        <activity android:name=".Favorites.FavoriteActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

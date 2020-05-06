@@ -14,6 +14,8 @@ import com.example.feedler.Post;
 import com.example.feedler.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView postText;
@@ -35,7 +37,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Post post) {
         postText.setText(post.getPostText());
-        dataText.setText(post.getDate());
+        dataText.setText(dateToString(post.getDate()));
         groupName.setText(post.getGroupName());
         if (post.favorite){
             favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade));
@@ -49,8 +51,24 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             Intent chosenIntent = Intent.createChooser(intent, post.getPostText());
             mShare.getContext().startActivity(chosenIntent);
         });
+    }
 
+    private String dateToString(long dateInMillis){
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(1000*dateInMillis);
+        String day = getRightStringNum(calendar.get(Calendar.DAY_OF_MONTH));
+        String month = getRightStringNum (calendar.get(Calendar.MONTH)+1);
+        String year = getRightStringNum( calendar.get(Calendar.YEAR));
+        String hour = getRightStringNum( calendar.get(Calendar.HOUR_OF_DAY));
+        String minute = getRightStringNum(calendar.get(Calendar.MINUTE));
+        String dateString= day+"."+month+"."+ year+ " "+ hour+":"+minute;
+        return dateString;
+    }
 
+    private String getRightStringNum(int num){
+        if (num<10){
+            return "0"+num;
+        } else return ""+num;
     }
 
 }

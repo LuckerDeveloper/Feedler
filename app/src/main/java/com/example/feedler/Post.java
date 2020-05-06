@@ -12,7 +12,7 @@ import java.text.DateFormat;
 @Entity(tableName = "post_table")
 public class Post {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public int id;
 
@@ -20,18 +20,17 @@ public class Post {
     private String groupName;
 
     @ColumnInfo(name = "data")
-    private String date;
+    private long date;
 
     @ColumnInfo(name = "text")
     private String postText;
 
     public boolean favorite;
 
-    public Post(@NonNull String groupName, @NonNull String date, String postText, int id) {
+    public Post(@NonNull String groupName, long date, String postText) {
         this.groupName = groupName;
         this.date=date;
         this.postText=postText;
-        this.id=id;
         this.favorite=false;
     }
 
@@ -39,7 +38,7 @@ public class Post {
         return this.groupName;
     }
 
-    public String getDate(){
+    public long getDate(){
         return this.date;
     }
 
@@ -47,12 +46,10 @@ public class Post {
         return this.postText;
     }
 
-    public boolean isEquals(Post post){
+    boolean isEquals(Post post){
         if (post.getGroupName().equals(this.getGroupName())){
-            if (post.getDate().equals(post.getDate())){
-                if(post.getPostText().equals(post.getPostText())){
-                    return true;
-                }
+            if (post.getDate()==this.getDate()){
+                return post.getPostText().equals(this.getPostText());
             }
         }
         return false;

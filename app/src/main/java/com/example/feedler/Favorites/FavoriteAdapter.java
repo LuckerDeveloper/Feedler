@@ -21,10 +21,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     private List<Post> posts;
     private PostAdapter.Listener listener;
+    private final LayoutInflater mInflater;
 
-    public FavoriteAdapter( Context context, List<Post> posts) {
+    FavoriteAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
         this.listener= (PostAdapter.Listener) context;
-        this.posts=posts;
+
     }
 
     @NonNull
@@ -44,13 +46,10 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
             if (post.favorite) {
                 holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade_empty));
                 post.favorite = false;
-                listener.replaceFavoriteVar(post);
                 listener.deleteFavorite(post);
-            }
-            else  {
+            }  else  {
                 holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade));
                 post.favorite= true;
-                listener.replaceFavoriteVar(post);
                 listener.insertFavorite(post);
             }
         });
@@ -58,6 +57,16 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     @Override
     public int getItemCount() {
-        return posts.size();
+        if(posts!=null){
+            return posts.size();
+        }
+        else {
+            return 0;
+        }
+    }
+
+    void setPosts(List<Post> posts){
+        this.posts = posts;
+        notifyDataSetChanged();
     }
 }

@@ -39,19 +39,14 @@ public class PostAdapter extends PagedListAdapter<Post, PostViewHolder> {
         holder.favorite.setOnClickListener(v -> {
             if (post.favorite) {
                 holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade_empty));
-                post.favorite = false;
                 listener.deleteFavorite(post);
-            }
-            else  {
+            }  else  {
+                Log.e("PostAdapter", "insert");
                 holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade));
-                post.favorite = true;
+                post.favorite=true;
                 listener.insertFavorite(post);
             }
-
-
         });
-
-
     }
 
     public interface Listener{
@@ -59,7 +54,6 @@ public class PostAdapter extends PagedListAdapter<Post, PostViewHolder> {
 
         void  deleteFavorite(Post post);
 
-        void replaceFavoriteVar(Post post);
     }
 
 }

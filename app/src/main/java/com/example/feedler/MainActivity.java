@@ -66,16 +66,24 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
                 @Override
                 public void onRefresh() {
 
-                    model.getAllPosts().observe(MainActivity.this, new Observer<PagedList<Post>>() {
+                    mSwipeRefreshLayout.postDelayed(new Runnable() {
                         @Override
-                        public void onChanged(PagedList<Post> posts) {
-                            adapter.submitList(posts);
+                        public void run() {
+                            model.getAllPosts().observe(MainActivity.this, new Observer<PagedList<Post>>() {
+                                @Override
+                                public void onChanged(PagedList<Post> posts) {
+                                    adapter.submitList(posts);
+                                }
+                            });
+                            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                            recyclerView.setAdapter(adapter);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         }
-                    });
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                    } , 500);
 
-                    recyclerView.setAdapter(adapter);
-                    mSwipeRefreshLayout.setRefreshing(false);
+
+
+
                 }
             });
 
@@ -95,14 +103,8 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
         switch (item.getItemId()) {
             case R.id.action_favorite:
             {
-                if(model.getFavoritePost().size()==0){
-                    Toast.makeText(getApplicationContext(),
-                            "Сохраненные посты отсутствуют",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
-                    startActivity(intent);
-                }
+                 Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
+                  startActivity(intent);
             }
             return true;
             case R.id.action_settings:
@@ -124,38 +126,21 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
     }
 
     @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
+
+    @Override
     public void insertFavorite(Post post) {
-        List<Post> postList=model.getFavoritePost();
-        if (postList.size()!=0) {
-            post.id=postList.get(postList.size()-1).id+1;
-        } else {
-            post.id=0;
-        }
-        for (int i =0 ; i<postList.size(); i++){
-            if ( post.isEquals(postList.get(i)) ){
-                post.id=postList.get(i).id;
-                break;
-            }
-        }
         model.insertFavorite(post);
     }
 
     @Override
     public void deleteFavorite(Post post) {
-        List<Post> favoritePost = model.getFavoritePost();
-        if(favoritePost!=null){
-            for (int i =0 ; i<favoritePost.size(); i++){
-                if ( post.isEquals(favoritePost.get(i)) ){
-                    model.deleteFavorite(favoritePost.get(i));
-                    break;
-                }
-            }
-        }
-
+        model.deleteFavorite(post);
     }
 
-    @Override
-    public void replaceFavoriteVar(Post post) {
-        model.replaceFavoriteVar(post);
-    }
 }

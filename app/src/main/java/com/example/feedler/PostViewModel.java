@@ -1,6 +1,8 @@
 package com.example.feedler;
 
 import android.app.Application;
+import android.content.Context;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
@@ -9,15 +11,16 @@ import androidx.paging.PagedList;
 import com.example.feedler.PagedList.MySourceFactory;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-public class PostViewModel extends AndroidViewModel {
+public class PostViewModel extends AndroidViewModel   {
 
     private PostRepository postRepository;
     private LiveData<PagedList<Post>> allPosts;
 
-    public PostViewModel (Application application) {
+    public PostViewModel (Application application ) {
         super(application);
         postRepository = new PostRepository(application);
     }
@@ -40,12 +43,10 @@ public class PostViewModel extends AndroidViewModel {
         postRepository.insertFavorite(post);
     }
 
-    public List<Post> getFavoritePost(){return postRepository.getFavoritePost();}
+    public void getFavoritePost(Context context){  postRepository.getFavoritePost(context) ;}
 
     public void deleteFavorite(Post post) {postRepository.deleteFavorite(post);}
 
     public void deleteFavoriteAll(){postRepository.deleteFavoriteAll();}
-
-    public void replaceFavoriteVar(Post post){postRepository.replaceFavoriteVar(post);}
 
 }

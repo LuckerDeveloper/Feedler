@@ -2,9 +2,7 @@ package com.example.feedler;
 
 import android.content.Intent;
 
-import androidx.room.Room;
 
-import com.example.feedler.Favorites.FavoriteDatabase;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
