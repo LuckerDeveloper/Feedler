@@ -5,16 +5,22 @@
 
     tools:context=".MainActivity">
     <item
-        android:id="@+id/action_favorite"
-        android:orderInCategory="100"
-        android:title="@string/Favor"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/Settings"
-        app:showAsAction="never"/>
+        android:title="@string/Theme"
+        app:showAsAction="never">
+
+    <menu>
+        <item
+            android:id="@+id/submenu1"
+            android:title="@string/Dark"
+            />
+        <item
+            android:id="@+id/submenu2"
+            android:title="@string/Light"/>
+    </menu>
+
+</item>
 
     <item
         android:id="@+id/authorization"

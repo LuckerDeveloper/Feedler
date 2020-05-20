@@ -1,23 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:id="@+id/swipe_container"
-    android:background="#FFFFFF"
+    android:textColor="@color/Text"
     >
+
+
+    <LinearLayout
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="@color/PetronasColor"
+        >
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/mainFeedMAIN"
+            android:background="@color/PetronasColorLite"
+            android:text="@string/MainFeed"
+            android:textColor="@color/Text"
+            />
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/favoriteFeedMAIN"
+            android:background="@color/PetronasColor"
+            android:text="@string/Favorite"
+            android:textColor="@color/Text"
+            />
+    </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/srl_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp">
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:background="#FFFFFF"
+        android:background="@color/White"
         android:id="@+id/recyclerView"
         style="@style/Widget.AppCompat.ListView.DropDown"
         android:layout_width="match_parent"
@@ -27,4 +57,4 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

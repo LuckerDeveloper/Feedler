@@ -1,8 +1,10 @@
 package com.example.feedler.PagedList;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView dataText;
     private TextView groupName;
     public Button favorite;
+    private LinearLayout windowsM;
 
    public PostViewHolder(View view) {
         super(view);
@@ -26,7 +29,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         groupName= view.findViewById(R.id.groupName);
         mShare = view.findViewById(R.id.share);
         favorite = view.findViewById(R.id.favoriteButton);
-
     }
 
     public void bind(Post post) {

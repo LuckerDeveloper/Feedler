@@ -6,10 +6,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
@@ -31,6 +33,7 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
     FavoriteAdapter adapter;
     PostViewModel model;
     List<Post> posts;
+    Button mainBut;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,15 +42,18 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
 
         recyclerView = findViewById(R.id.recyclerViewFavorite);
 
-        model= new ViewModelProvider(this).get(PostViewModel.class);
-        posts=model.getFavoritePost();
+        model = new ViewModelProvider(this).get(PostViewModel.class);
+        posts = model.getFavoritePost();
         adapter = new FavoriteAdapter(this, posts);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-
-
+        mainBut = findViewById(R.id.mainFeedFAV);
+        mainBut.setOnClickListener(v -> {
+            Intent intent = new Intent(FavoriteActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -66,11 +72,6 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
                 posts.clear();
                 Intent intent=new Intent(this, MainActivity.class);
                 startActivity(intent);
-            }
-            return true;
-            case R.id.action_settings:
-            {
-                //меню настроек
             }
             return true;
             default:
@@ -106,5 +107,11 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
     @Override
     public void replaceFavoriteVar(Post post) {
         model.replaceFavoriteVar(post);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

@@ -7,11 +7,38 @@
     android:layout_height="match_parent"
     tools:context=".Favorites.FavoriteActivity"
     android:id="@+id/swipe_container"
-    android:background="#FFFFFF"
+    android:textColor="@color/Text"
     >
+        <LinearLayout
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:background="@color/PetronasColor"
+            >
+
+                <Button
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:id="@+id/mainFeedFAV"
+                    android:background="@color/PetronasColor"
+                    android:text="@string/MainFeed"
+                    android:textColor="@color/Text"
+                    />
+
+                <Button
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:id="@+id/favoriteFeedFAV"
+                    android:background="@color/PetronasColorLite"
+                    android:text="@string/Favorite"
+                    android:textColor="@color/Text"
+                    />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:background="#FFFFFF"
+            android:background="@color/White"
             android:id="@+id/recyclerViewFavorite"
             style="@style/Widget.AppCompat.ListView.DropDown"
             android:layout_width="match_parent"

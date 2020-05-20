@@ -1,43 +1,46 @@
 package com.example.feedler;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-
 import com.example.feedler.Favorites.FavoriteActivity;
 import com.example.feedler.PagedList.PostAdapter;
 import com.vk.sdk.VKSdk;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PostAdapter.Listener{
+    public static final String THEME = "my_theme";
     RecyclerView recyclerView;
     PostAdapter adapter;
     PostRepository.PostDiffUtilCallback diffUtilCallback;
     PostViewModel model;
+    Button favButon;
+    public static String yes_THEME;
+    SharedPreferences sPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadText();
         setContentView(R.layout.activity_list);
 
         final SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.srl_container);
@@ -80,6 +83,17 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
             });
 
         }
+        favButon = findViewById(R.id.favoriteFeedMAIN);
+        favButon.setOnClickListener(v->{
+            if(model.getFavoritePost().size()==0){
+                Toast.makeText(getApplicationContext(),
+                        "Сохраненные посты отсутствуют",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -89,34 +103,35 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
         return true;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_favorite:
+
+            case R.id.submenu1:
             {
-                if(model.getFavoritePost().size()==0){
-                    Toast.makeText(getApplicationContext(),
-                            "Сохраненные посты отсутствуют",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
-                    startActivity(intent);
-                }
+                //темный цвет
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                yes_THEME = "YES";
+
             }
             return true;
-            case R.id.action_settings:
+            case R.id.submenu2:
             {
-                //меню настроек
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                yes_THEME = "NO";
+                //светлый цвет
             }
             return true;
             case R.id.authorization:
             {
                 //меню авторизации
             }
+            return true;
             case R.id.exit:
             {
-                //меню выхода
+
             }
             default:
                 return super.onOptionsItemSelected(item);
@@ -158,4 +173,35 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
     public void replaceFavoriteVar(Post post) {
         model.replaceFavoriteVar(post);
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(THEME, yes_THEME );
+        super.onSaveInstanceState(outState);
+    }
+
+    public void saveText() {
+        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(THEME,yes_THEME);
+        ed.apply();
+    }
+
+    public void loadText() {
+        sPref = getPreferences(MODE_PRIVATE);
+        String savedText = sPref.getString(THEME, null);
+
+        if (savedText!=null &&savedText.equals("YES") ) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES); }
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveText();
+    }
 }
+
+
