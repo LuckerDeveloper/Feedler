@@ -19,4 +19,5 @@
     <string name="Dark">Темная</string>
     <string name="Light">Светлая</string>
     <string name="Theme">Тема</string>
+    <string name="appbar_scrolling_view_behavior">behavior_scroll</string>
 </resources>

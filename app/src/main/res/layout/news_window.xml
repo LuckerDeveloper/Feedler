@@ -60,8 +60,7 @@
                     android:layout_weight="1"
                     android:background="@color/PetronasColorLite"
                     android:scrollbarStyle="insideInset"
-                    android:stateListAnimator="@null"
-                    ></Button>
+                    android:stateListAnimator="@null" />
 
             </LinearLayout>
             <TextView
@@ -134,7 +133,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="260dp"
-            android:background="@drawable/circle"
             android:drawableRight="@drawable/ic_share_black_24dp"
             />
 

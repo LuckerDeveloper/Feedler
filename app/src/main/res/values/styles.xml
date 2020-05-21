@@ -5,7 +5,6 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/PetronasColor</item>
         <item name="colorPrimaryDark">@color/Black</item>
-        <item name="android:colorBackground">@color/Downlaod</item>
-
+        <item name="colorAccent">@color/Downlaod</item>
     </style>
 </resources>
