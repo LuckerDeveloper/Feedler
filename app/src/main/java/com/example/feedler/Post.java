@@ -7,7 +7,10 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
+import com.example.feedler.Images.Image;
+
 import java.text.DateFormat;
+import java.util.List;
 
 @Entity(tableName = "post_table")
 public class Post {
@@ -26,6 +29,9 @@ public class Post {
     private String postText;
 
     public boolean favorite;
+
+    @Ignore
+    public List<Image> imageList;
 
     public Post(@NonNull String groupName, long date, String postText) {
         this.groupName = groupName;

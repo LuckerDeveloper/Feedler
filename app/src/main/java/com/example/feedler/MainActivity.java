@@ -1,7 +1,9 @@
 package com.example.feedler;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.MainThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,22 +26,29 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.example.feedler.Favorites.FavoriteActivity;
+import com.example.feedler.Favorites.FavoriteAdapter;
 import com.example.feedler.PagedList.PostAdapter;
 import com.vk.sdk.VKSdk;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements PostAdapter.Listener{
+public class MainActivity extends AppCompatActivity implements PostAdapter.Listener, PostRepository.CallbackWithListPost{
+
+    public static final String APP_PREFERENCES = "Settings";
+    public static final String APP_PREFERENCES_INNER_BROWSER = "APP_PREFERENCES_INNER_BROWSER";
     RecyclerView recyclerView;
     PostAdapter adapter;
     PostRepository.PostDiffUtilCallback diffUtilCallback;
     PostViewModel model;
+    public SharedPreferences mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
 
         final SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.srl_container);
 
@@ -51,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
             adapter = new PostAdapter(diffUtilCallback, this);
             model= new ViewModelProvider(this).get(PostViewModel.class);
 
-            model.getAllPosts().observe(this, new Observer<PagedList<Post>>() {
+            model.getAllPosts(this).observe(this, new Observer<PagedList<Post>>() {
                 @Override
                 public void onChanged(PagedList<Post> posts) {
                     adapter.submitList(posts);
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
                     mSwipeRefreshLayout.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            model.getAllPosts().observe(MainActivity.this, new Observer<PagedList<Post>>() {
+                            model.getAllPosts(MainActivity.this).observe(MainActivity.this, new Observer<PagedList<Post>>() {
                                 @Override
                                 public void onChanged(PagedList<Post> posts) {
                                     adapter.submitList(posts);
@@ -80,10 +90,6 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
                     } , 500);
-
-
-
-
                 }
             });
 
@@ -109,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
             return true;
             case R.id.action_settings:
             {
+                item.setChecked(!item.isChecked());
+
+
                 //меню настроек
             }
             return true;
@@ -118,7 +127,9 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
             }
             case R.id.exit:
             {
-                //меню выхода
+                VKSdk.logout();
+                Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
+                startActivity(intent);
             }
             default:
                 return super.onOptionsItemSelected(item);
@@ -143,4 +154,29 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
         model.deleteFavorite(post);
     }
 
+    @Override
+    public void onSuccess(Object result) {
+        FavoriteAdapter favoriteAdapter = new FavoriteAdapter(this );
+        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                List<Post> postList= (List<Post>) result;
+                recyclerView.setAdapter(favoriteAdapter);
+                favoriteAdapter.setPosts(postList);
+            }
+        });
+
+    }
+
+    @Override
+    public void onFail() {
+        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(),
+                        "Сохраненные посты отсутствуют",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }

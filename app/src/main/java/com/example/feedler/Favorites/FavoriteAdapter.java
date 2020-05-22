@@ -22,18 +22,19 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
     private List<Post> posts;
     private PostAdapter.Listener listener;
     private final LayoutInflater mInflater;
+    Context context;
 
-    FavoriteAdapter(Context context) {
+    public FavoriteAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         this.listener= (PostAdapter.Listener) context;
-
+        this.context= context;
     }
 
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_window, parent, false);
-        PostViewHolder holder = new PostViewHolder(view);
+        PostViewHolder holder = new PostViewHolder(view, context);
         return holder;
     }
 
@@ -65,7 +66,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
         }
     }
 
-    void setPosts(List<Post> posts){
+    public void setPosts(List<Post> posts){
         this.posts = posts;
         notifyDataSetChanged();
     }

@@ -1,5 +1,6 @@
 package com.example.feedler.PagedList;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,11 +14,12 @@ import java.util.List;
 public class MyPositionalDataSource extends PositionalDataSource<Post> {
 
     private final PostRepository postStorage;
-
+    private Context context;
     private String mNextFrom = null;
 
-    MyPositionalDataSource(PostRepository postStorage) {
+    MyPositionalDataSource(PostRepository postStorage, Context context) {
         this.postStorage = postStorage;
+        this.context=context;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class MyPositionalDataSource extends PositionalDataSource<Post> {
                 callback.onResult(result, params.requestedStartPosition);
             }
         };
-        postStorage.getData(mNextFrom, params.requestedLoadSize, postCallback);
+        postStorage.getData(mNextFrom, params.requestedLoadSize, postCallback,context);
 
     }
 
@@ -42,6 +44,6 @@ public class MyPositionalDataSource extends PositionalDataSource<Post> {
                 callback.onResult(result);
             }
         };
-        postStorage.getData(mNextFrom, params.loadSize, postCallback);
+        postStorage.getData(mNextFrom, params.loadSize, postCallback, context);
     }
 }

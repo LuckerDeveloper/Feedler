@@ -25,8 +25,8 @@ public class PostViewModel extends AndroidViewModel   {
         postRepository = new PostRepository(application);
     }
 
-    LiveData<PagedList<Post>> getAllPosts() {
-        MySourceFactory sourceFactory = new MySourceFactory(postRepository);
+    LiveData<PagedList<Post>> getAllPosts(Context context) {
+        MySourceFactory sourceFactory = new MySourceFactory(postRepository, context);
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)

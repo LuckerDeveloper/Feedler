@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 
 
+import com.example.feedler.Images.Image;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 public class PostRepository  {
 
-    public interface FavoriteCallBack<T> {
+    public interface CallbackWithListPost<T> {
 
         void onSuccess(T result);
 
@@ -40,14 +41,13 @@ public class PostRepository  {
 
     private PostRoomDatabase postRoomDatabase;
     private List<Post> savedList;
-    boolean flag;
 
     PostRepository(android.app.Application application) {
         postRoomDatabase= PostRoomDatabase.getDatabase(application);
     }
 
     //Получение постов с сети
-    public void getData(final String startFrom, final int count, final Callback<List<Post>> callback){
+    public void getData(final String startFrom, final int count, final Callback<List<Post>> callback, Context context){
         final Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put(VKApiConst.FILTERS, "post");
         paramsMap.put("count", count);
@@ -70,6 +70,61 @@ public class PostRepository  {
 
                     for (int i = 0; i < jsonArrayPost.length(); i++) {
                         JSONObject jsonObjectPost = (JSONObject) jsonArrayPost.get(i);
+
+                        List<Image> imageList = new ArrayList<>();
+
+                        if (jsonObjectPost.has("attachments")){
+                            JSONArray jsonAttachments =(JSONArray) jsonObjectPost.get("attachments");
+                            for( int j=0 ; j<jsonAttachments.length(); j++){
+                                JSONObject jsonAttachment = (JSONObject) jsonAttachments.get(j);
+                                if (jsonAttachment.getString("type").equals("photo")){
+                                    JSONObject jsonPhoto= (JSONObject)  jsonAttachment.get("photo");
+                                    String smallSizeURL=null;
+                                    int width=jsonPhoto.getInt("width");
+                                    int height=jsonPhoto.getInt("height");
+                                    if(jsonPhoto.has("photo_604")){
+                                        if((width>604 || height>604)){
+                                            if (width>height){
+                                                height=height*604/width;
+                                                width=604;
+                                            } else {
+                                                width=width*604/height;
+                                                height=604;
+                                            }
+                                        }
+                                        smallSizeURL=jsonPhoto.getString("photo_604");
+                                    } else if(jsonPhoto.has("photo_130")) {
+                                        smallSizeURL=jsonPhoto.getString("photo_130");
+                                    } else if(jsonPhoto.has("photo_75")){
+                                        smallSizeURL=jsonPhoto.getString("photo_75");
+                                    }
+                                    Image image = new Image(smallSizeURL,width,height);
+                                    imageList.add(image);
+
+
+//
+//
+//                                    String smallPhoto = null;
+//                                    if(jsonPhoto.has("photo_807")) {
+//                                        smallPhoto=jsonPhoto.getString("photo_807");
+//                                    } else if(jsonPhoto.has("photo_604")){
+//                                        smallPhoto=jsonPhoto.getString("photo_604");
+//                                    } else if(jsonPhoto.has("photo_1280")){
+//                                        smallPhoto=jsonPhoto.getString("photo_1280");
+//                                    }else if(jsonPhoto.has("photo_130")){
+//                                        smallPhoto=jsonPhoto.getString("photo_130");
+//                                    }else if(jsonPhoto.has("photo_2560")){
+//                                        smallPhoto=jsonPhoto.getString("photo_2560");
+//                                    }else if(jsonPhoto.has("photo_75")) {
+//                                        smallPhoto = jsonPhoto.getString("photo_75");
+//                                    }
+//                                    if(smallPhoto!=null){
+//                                        photoList.add(smallPhoto);
+//                                    }
+
+                                }
+                            }
+                        }
 
                         String text = jsonObjectPost.optString("text");
                         int sourceId = jsonObjectPost.getInt("source_id");
@@ -95,6 +150,9 @@ public class PostRepository  {
                             }
                         }
                         Post post=new Post(groupName, dateInMillis, text);
+                        post.imageList=imageList;
+
+
                         list.add(post);
                     }
 
@@ -130,27 +188,26 @@ public class PostRepository  {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                AppExecutors.getInstance().postDatabaseExrcutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (savedList==null) {
-                            savedList = postRoomDatabase.postDao().getSaved();
-                            Log.e("getData", "savedList");
-                            callback.onResult("0", savedList, null);
-                        } else {
-                            List<Post> emptyList = new ArrayList<>();
-                            Log.e("getData", "emptyList");
-                            callback.onResult("0", emptyList, null);
+                if (startFrom==null){
+                    CallbackWithListPost callbackWithListPost = (CallbackWithListPost) context;
+                    AppExecutors.getInstance().postDatabaseExrcutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            savedList=postRoomDatabase.postDao().getSaved();
+                            if (savedList==null) {
+                                callbackWithListPost.onFail();
+                            } else {
+                                callbackWithListPost.onSuccess(savedList);
+                            }
                         }
-                    }
-                });
-
+                    });
+                }
             }
         });
     }
 
     void getFavoritePost(Context context){
-        FavoriteCallBack favoriteCallBack= (FavoriteCallBack) context;
+        CallbackWithListPost favoriteCallBack= (CallbackWithListPost) context;
         AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
             @Override
             public void run() {

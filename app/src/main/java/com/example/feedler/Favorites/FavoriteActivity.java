@@ -28,7 +28,7 @@ import com.example.feedler.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavoriteActivity extends AppCompatActivity implements PostAdapter.Listener , PostRepository.FavoriteCallBack {
+public class FavoriteActivity extends AppCompatActivity implements PostAdapter.Listener , PostRepository.CallbackWithListPost {
 
     RecyclerView recyclerView;
     FavoriteAdapter adapter;
@@ -97,7 +97,6 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
     public void onSuccess(Object result) {
         posts= (List<Post>) result;
         adapter.setPosts(posts);
-
     }
 
     @Override
