@@ -4,16 +4,16 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/PetronasColor</item>
-        <item name="colorPrimaryDark">@color/Black</item>
-        <item name="colorAccent">@color/Downlaod</item>
+        <item name="colorPrimaryDark">@color/DarkPetronasColor</item>
+        <item name="colorAccent">@color/DarkPetronasColor</item>
+        <item name="android:navigationBarColor">@color/BlackDarkPetronasColor</item>
     </style>
 
     <style name="Toolbar">
         <item name="colorPrimary">@color/PetronasColor</item>
         <item name="colorPrimaryDark">@color/Black</item>
         <item name="colorAccent">@color/Downlaod</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
-        <item name="android:navigationBarColor">@color/Black</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 
 </resources>
