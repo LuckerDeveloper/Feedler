@@ -36,12 +36,16 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
     Button favButon;
     public static String yes_THEME;
     SharedPreferences sPref;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadText();
         setContentView(R.layout.activity_list);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         final SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.srl_container);
 

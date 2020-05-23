@@ -12,8 +12,14 @@
         <item name="colorPrimary">@color/PetronasColor</item>
         <item name="colorPrimaryDark">@color/Black</item>
         <item name="colorAccent">@color/Downlaod</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:navigationBarColor">@color/Black</item>
+    </style>
+
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">#FFCC00</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:background">#5fa3d0</item>
     </style>
 
 </resources>

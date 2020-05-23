@@ -2,26 +2,21 @@ package com.example.feedler.Favorites;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.feedler.MainActivity;
 import com.example.feedler.PagedList.PostAdapter;
 import com.example.feedler.Post;
-import com.example.feedler.PostRepository;
 import com.example.feedler.PostViewModel;
 import com.example.feedler.R;
 
@@ -34,11 +29,15 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
     PostViewModel model;
     List<Post> posts;
     Button mainBut;
+    Toolbar toolbarF;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.favorite_list);
+
+        toolbarF = findViewById(R.id.toolbar1);
+        setSupportActionBar(toolbarF);
 
         recyclerView = findViewById(R.id.recyclerViewFavorite);
 

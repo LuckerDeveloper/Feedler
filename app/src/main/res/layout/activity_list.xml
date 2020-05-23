@@ -1,63 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:id="@+id/swipe_container"
-    android:textColor="@color/Text"
-    android:fitsSystemWindows="true"
-    >
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-
-    <LinearLayout
-        android:layout_height="40dp"
-        android:orientation="horizontal"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         >
 
-        <Button
-            android:layout_weight="1"
+<androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    app:layout_scrollFlags="scroll|snap"
+    style="@style/Toolbar"
+   >
+
+</androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:id="@+id/mainFeedMAIN"
-            android:background="@color/PetronasColorLite"
-            android:text="@string/MainFeed"
-            android:textColor="@color/Text"
-            />
+            android:orientation="horizontal"
+            app:layout_scrollFlags="enterAlways|scroll"
+            >
 
-        <Button
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/favoriteFeedMAIN"
-            android:background="@color/PetronasColor"
-            android:text="@string/Favorite"
-            android:textColor="@color/Text"
-            />
-    </LinearLayout>
+            <Button
+                android:id="@+id/mainFeedMAIN"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@color/PetronasColorLite"
+                android:text="@string/MainFeed"
+                android:textColor="@color/Text"
+                />
 
+            <Button
+                android:id="@+id/favoriteFeedMAIN"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@color/PetronasColor"
+                android:text="@string/Favorite"
+                android:textColor="@color/Text" />
+          </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/srl_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            style="@style/Widget.AppCompat.ListView.DropDown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/White"
+            android:divider="@drawable/vk_gray_transparent_shape" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:background="@color/White"
-        android:id="@+id/recyclerView"
-        style="@style/Widget.AppCompat.ListView.DropDown"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@drawable/vk_gray_transparent_shape"
-        />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
