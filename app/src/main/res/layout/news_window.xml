@@ -7,7 +7,10 @@
     android:duplicateParentState="false"
     android:orientation="vertical"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingRight="20dp"
+    android:id="@+id/windowsMain"
+    android:textColor="@color/Text"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,16 +41,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/groupName"
-                android:layout_width="0dp"
-                android:layout_weight="9"
-                android:layout_height="20dp"
-                android:layout_marginBottom="15dp"
-                android:text="Группа андроид"
-                android:textStyle="normal|bold|italic"
-                >
-            </TextView>
+                <TextView
+                    android:id="@+id/groupName"
+                    android:layout_width="0dp"
+                    android:layout_weight="9"
+                    android:layout_height="20dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="Группа андроид"
+                    android:textStyle="normal|bold|italic"
+                    android:textColor="@color/Text"
+                    >
+                </TextView>
 
                 <Button
                     android:id="@+id/favoriteButton"
@@ -56,15 +60,15 @@
                     android:layout_weight="1"
                     android:background="@color/PetronasColorLite"
                     android:scrollbarStyle="insideInset"
-                    android:stateListAnimator="@null"
-                    ></Button>
+                    android:stateListAnimator="@null" />
 
-        </LinearLayout>
+            </LinearLayout>
             <TextView
                 android:id="@+id/postTime"
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
                 android:text="20:19"
+                android:textColor="@color/Text"
                 android:textStyle="normal|bold|italic"
                 >
             </TextView>
@@ -75,6 +79,7 @@
             android:id="@+id/favorite"
             android:layout_width="match_parent"
             android:layout_height="25dp"
+
             ></TextView>
 
     </LinearLayout>
@@ -87,14 +92,14 @@
 
     </LinearLayout>
 
-
-
-
     <TextView
         android:id="@+id/postText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp">
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/Text"
+        >
+
     </TextView>
 
     <LinearLayout
@@ -119,6 +124,7 @@
             android:textStyle="normal|bold|italic"
             android:paddingTop="4dp"
             android:layout_marginLeft="10dp"
+            android:textColor="@color/Text"
             />
 
         <TextView
@@ -126,10 +132,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="260dp"
-            android:background="@drawable/circle"
             android:drawableRight="@drawable/ic_share_black_24dp"
             />
 
-</LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

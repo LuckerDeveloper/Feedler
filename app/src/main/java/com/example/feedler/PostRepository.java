@@ -222,6 +222,23 @@ public class PostRepository  {
         });
     }
 
+    void getSearchFavoritePost(Context context, String search){
+        CallbackWithListPost favoriteSearchCallBack= (CallbackWithListPost) context;
+        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                PostDao postDao = postRoomDatabase.postDao();
+                List<Post> posts= postDao.getFavoriteSearching("%"+search+"%");
+                if (posts.size()>0){
+
+                    favoriteSearchCallBack.onSuccess(posts);
+                } else{
+                    favoriteSearchCallBack.onFail();
+                }
+            }
+        });
+    }
+
 
     public void insertFavorite(Post post){
         AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {

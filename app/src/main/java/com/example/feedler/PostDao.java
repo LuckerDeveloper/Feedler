@@ -23,6 +23,9 @@ public interface PostDao {
     @Query("SELECT * FROM POST_TABLE WHERE favorite = 1 ORDER BY data DESC ")
     List<Post> getFavorite();
 
+    @Query("SELECT * FROM POST_TABLE WHERE favorite = 1 AND text LIKE :search OR group_name LIKE :search AND favorite = 1 ORDER BY data DESC")
+    List<Post> getFavoriteSearching(String search);
+
     @Query("SELECT * FROM POST_TABLE WHERE group_name =:groupName AND data =:date AND text=:textPost ")
     Post getByParams(String groupName, long date , String textPost);
 

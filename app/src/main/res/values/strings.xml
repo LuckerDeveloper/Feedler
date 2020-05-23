@@ -13,5 +13,10 @@
     <string name="Auth">Авторизация</string>
     <string name="Exit">Выход</string>
     <string name="Refresh">Обновить</string>
-    <string name="Delete">Очистить</string>
+    <string name="Delete">Очистить всё</string>
+    <string name="Favorite">Избранное</string>
+    <string name="MainFeed">Лента</string>
+    <string name="Dark">Темная</string>
+    <string name="Light">Светлая</string>
+    <string name="Theme">Тема</string>
 </resources>

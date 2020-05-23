@@ -1,5 +1,6 @@
 package com.example.feedler;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +12,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -35,18 +40,27 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PostAdapter.Listener, PostRepository.CallbackWithListPost{
 
+    public static final String THEME = "my_theme";
     public static final String APP_PREFERENCES = "Settings";
     public static final String APP_PREFERENCES_INNER_BROWSER = "APP_PREFERENCES_INNER_BROWSER";
     RecyclerView recyclerView;
     PostAdapter adapter;
     PostRepository.PostDiffUtilCallback diffUtilCallback;
     PostViewModel model;
+    Button favButon;
+    public static String yes_THEME;
+    SharedPreferences sPref;
     public SharedPreferences mSettings;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadText();
         setContentView(R.layout.activity_list);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
 
@@ -94,6 +108,11 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
             });
 
         }
+        favButon = findViewById(R.id.favoriteFeedMAIN);
+        favButon.setOnClickListener(v->{
+            Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -103,28 +122,32 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
         return true;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_favorite:
+            case R.id.submenu1:
             {
-                 Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
-                  startActivity(intent);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                yes_THEME = "YES";
+                saveText();
             }
             return true;
-            case R.id.action_settings:
+            case R.id.submenu2:
             {
-                item.setChecked(!item.isChecked());
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                yes_THEME = "NO";
+                saveText();
 
-
-                //меню настроек
             }
             return true;
             case R.id.authorization:
             {
-                //меню авторизации
+                Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
+                startActivity(intent);
             }
+            return true;
             case R.id.exit:
             {
                 VKSdk.logout();
@@ -178,5 +201,33 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(THEME, yes_THEME );
+        super.onSaveInstanceState(outState);
+    }
+
+    public void saveText() {
+        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(THEME,yes_THEME);
+        ed.apply();
+    }
+
+    public void loadText() {
+        sPref = getPreferences(MODE_PRIVATE);
+        String savedText = sPref.getString(THEME, null);
+
+        if (savedText!=null &&savedText.equals("YES") ) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES); }
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveText();
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="Text">#000000</color>
     <color name="Black">#000000</color>
     <color name="PetronasColor">#03BCB3</color>
     <color name="PetronasColorLite">#DBF6F5</color>
@@ -7,5 +8,6 @@
     <color name="White">#FFFFFF</color>
     <color name="DarkGray">#333333</color>
     <color name="DarkPetronasColor">#163A3A</color>
-    <color name="BlackDarkPetronasColor">#0A1C1C</color>
+    <color name="BlackDarkPetronasColor">#112525</color>
+    <color name="Downlaod">#01372E</color>
 </resources>

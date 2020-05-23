@@ -45,6 +45,9 @@ public class PostViewModel extends AndroidViewModel   {
 
     public void getFavoritePost(Context context){  postRepository.getFavoritePost(context) ;}
 
+    public void getSearchFavoritePost(Context context, String search){  postRepository.getSearchFavoritePost(context, search) ;}
+
+
     public void deleteFavorite(Post post) {postRepository.deleteFavorite(post);}
 
     public void deleteFavoriteAll(){postRepository.deleteFavoriteAll();}

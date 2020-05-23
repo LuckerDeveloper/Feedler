@@ -25,10 +25,9 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_authorization);
 
         Button authButtonVK = findViewById(R.id.authButtonVK);
-        Button authButtonFB = findViewById(R.id.authButtonFB);
 
         authButtonVK.setOnClickListener(this);
-        authButtonFB.setOnClickListener(this);
+
 
 
     }
@@ -41,9 +40,6 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
                 } else {
                     VKSdk.login(this, scope);
                 }
-                break;
-            case R.id.authButtonFB:
-                Toast.makeText(getApplicationContext(),"Авторизация в Facebook пока не доступна",Toast.LENGTH_LONG).show();
                 break;
         }
 

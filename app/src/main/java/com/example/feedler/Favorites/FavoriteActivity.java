@@ -3,11 +3,18 @@ package com.example.feedler.Favorites;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +34,8 @@ import com.example.feedler.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FavoriteActivity extends AppCompatActivity implements PostAdapter.Listener , PostRepository.CallbackWithListPost {
 
@@ -34,12 +43,23 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
     FavoriteAdapter adapter;
     PostViewModel model;
     List<Post> posts;
+    Button mainBut;
+    EditText edit;
+    Toolbar toolbarF;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.favorite_list);
+        mainBut = findViewById(R.id.mainFeedFAV);
+        mainBut.setOnClickListener(v -> {
+            Intent intent = new Intent(FavoriteActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
+        edit = findViewById(R.id.search);
 
+        toolbarF = findViewById(R.id.toolbar1);
+        setSupportActionBar(toolbarF);
         model= new ViewModelProvider(this).get(PostViewModel.class);
         model.getFavoritePost(this);
 
@@ -48,6 +68,49 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
         recyclerView.setAdapter(adapter);
         adapter.setPosts(posts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        edit.addTextChangedListener(new TextWatcher() {
+
+            CountDownTimer timer;
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (timer != null) {
+                    timer.cancel();
+                }
+                timer = new CountDownTimer(500,500) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        model = new ViewModelProvider(FavoriteActivity.this).get(PostViewModel.class);
+                        model.getSearchFavoritePost(FavoriteActivity.this, edit.getText().toString());
+
+                        recyclerView = findViewById(R.id.recyclerViewFavorite);
+                        adapter = new FavoriteAdapter(FavoriteActivity.this);
+                        recyclerView.setAdapter(adapter);
+                        adapter.setPosts(posts);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(FavoriteActivity.this));
+
+                    }
+                }.start();
+
+            }
+
+
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -65,11 +128,6 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
                 model.deleteFavoriteAll();
                 Intent intent=new Intent(this, MainActivity.class);
                 startActivity(intent);
-            }
-            return true;
-            case R.id.action_settings:
-            {
-                //меню настроек
             }
             return true;
             default:
@@ -104,9 +162,11 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
         AppExecutors.getInstance().mainThread().execute(() -> Toast.makeText(getApplicationContext(),
                 "Сохраненные посты отсутствуют",
                 Toast.LENGTH_SHORT).show());
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
 }

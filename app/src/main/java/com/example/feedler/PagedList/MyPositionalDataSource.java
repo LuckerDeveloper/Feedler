@@ -31,7 +31,7 @@ public class MyPositionalDataSource extends PositionalDataSource<Post> {
                 callback.onResult(result, params.requestedStartPosition);
             }
         };
-        postStorage.getData(mNextFrom, params.requestedLoadSize, postCallback,context);
+        postStorage.getData(mNextFrom, params.requestedLoadSize, postCallback, context);
 
     }
 

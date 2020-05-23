@@ -1,17 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Favorites.FavoriteActivity"
     android:id="@+id/swipe_container"
-    android:background="#FFFFFF"
     >
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar1"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    app:layout_scrollFlags="scroll|snap"
+                    style="@style/Toolbar"
+                    >
+
+                </androidx.appcompat.widget.Toolbar>
+
+                <LinearLayout
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:background="@color/PetronasColor"
+                    app:layout_scrollFlags="enterAlways|scroll"
+                    >
+
+                        <Button
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:id="@+id/mainFeedFAV"
+                            android:background="@color/PetronasColor"
+                            android:text="@string/MainFeed"
+                            android:textColor="@color/Text"
+                            />
+
+                        <Button
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:id="@+id/favoriteFeedFAV"
+                            android:background="@color/PetronasColorLite"
+                            android:text="@string/Favorite"
+                            android:textColor="@color/Text"
+                            />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:background="@color/PetronasColorLite"
+                    >
+                        <EditText
+                            android:id="@+id/search"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Поиск"
+                            android:textColor="@color/Text"/>
+                </LinearLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:background="#FFFFFF"
+
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="@color/White"
             android:id="@+id/recyclerViewFavorite"
             style="@style/Widget.AppCompat.ListView.DropDown"
             android:layout_width="match_parent"
@@ -20,4 +81,4 @@
             />
 
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
