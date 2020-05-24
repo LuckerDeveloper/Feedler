@@ -12,9 +12,9 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class AppExecutors {
 
-    private final Executor postDatabaseExrcutor;
+    private final Executor postDatabaseExecutor;
 
-    private final ExecutorService favoriteDatabaseExrcutor;
+    private final ExecutorService ImageDatabaseExecutor;
 
     private final Executor mMainThread;
 
@@ -26,9 +26,9 @@ public class AppExecutors {
         return sAppExecutors;
     }
 
-    private AppExecutors(Executor postDatabaseExrcutor, ExecutorService favoriteDatabaseExrcutor, Executor mainThread, ScheduledExecutorService scheduledExecutorService) {
-        this.postDatabaseExrcutor = postDatabaseExrcutor;
-        this.favoriteDatabaseExrcutor = favoriteDatabaseExrcutor;
+    private AppExecutors(Executor postDatabaseExecutor, ExecutorService ImageDatabaseExecutor, Executor mainThread, ScheduledExecutorService scheduledExecutorService) {
+        this.postDatabaseExecutor = postDatabaseExecutor;
+        this.ImageDatabaseExecutor = ImageDatabaseExecutor;
         this.mMainThread = mainThread;
         mScheduledExecutorService = scheduledExecutorService;
     }
@@ -38,12 +38,12 @@ public class AppExecutors {
                 new MainThreadExecutor(), Executors.newScheduledThreadPool(1));
     }
 
-    public Executor postDatabaseExrcutor() {
-        return postDatabaseExrcutor;
+    public Executor postDatabaseExecutor() {
+        return postDatabaseExecutor;
     }
 
-    public ExecutorService favoriteDatabaseExrcutor() {
-        return favoriteDatabaseExrcutor;
+    public ExecutorService ImageDatabaseExecutor() {
+        return ImageDatabaseExecutor;
     }
 
     public Executor mainThread() {

@@ -15,14 +15,14 @@ public abstract class PostRoomDatabase extends RoomDatabase {
 
     static PostRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (PostRoomDatabase.class) {
+//            synchronized (PostRoomDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             PostRoomDatabase.class, "post_database")
                             .fallbackToDestructiveMigration()
                             .build();
                 }
-            }
+//            }
         }
         return INSTANCE;
     }

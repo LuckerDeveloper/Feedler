@@ -19,6 +19,7 @@ public class PostViewModel extends AndroidViewModel   {
 
     private PostRepository postRepository;
     private LiveData<PagedList<Post>> allPosts;
+    public static Post postForTransmission;
 
     public PostViewModel (Application application ) {
         super(application);
@@ -47,6 +48,7 @@ public class PostViewModel extends AndroidViewModel   {
 
     public void getSearchFavoritePost(Context context, String search){  postRepository.getSearchFavoritePost(context, search) ;}
 
+    public void getSavedPostFromDB(Context  context){postRepository.getSavedPostFromDatabase(context);    }
 
     public void deleteFavorite(Post post) {postRepository.deleteFavorite(post);}
 

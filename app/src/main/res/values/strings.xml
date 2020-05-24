@@ -6,6 +6,7 @@
     <string name="buttonList">Перейти к ленте</string>
     <string name="in_vk">VK</string>
     <string name="in_facebook">FaceBook</string>
+    <string name="in_twitter">Twitter</string>
     <string name="feedler">Feedler</string>
     <string name="chooser" />
     <string name="Favor">Избранное</string>
@@ -19,4 +20,5 @@
     <string name="Dark">Темная</string>
     <string name="Light">Светлая</string>
     <string name="Theme">Тема</string>
+    <string name="InnerBrowser">Встроенный браузер</string>
 </resources>

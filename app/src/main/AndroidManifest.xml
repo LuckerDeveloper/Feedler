@@ -33,14 +33,19 @@
         <activity
             android:name=".AuthorizationActivity"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".PostActivity"/>
+            tools:ignore="LockedOrientationActivity"
+            android:label="@string/app_name"/>
+        <activity android:name=".PostActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="@string/app_name"/>
         <activity android:name=".Favorites.FavoriteActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity android:name=".InnerWebBrowser.WebActivity"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity"
+            android:label="@string/app_name"/>
     </application>
 
 </manifest>

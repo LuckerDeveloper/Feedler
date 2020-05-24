@@ -33,12 +33,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.feedler.Favorites.FavoriteActivity;
 import com.example.feedler.Favorites.FavoriteAdapter;
 import com.example.feedler.PagedList.PostAdapter;
+import com.example.feedler.PagedList.PostViewHolder;
 import com.vk.sdk.VKSdk;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements PostAdapter.Listener, PostRepository.CallbackWithListPost{
+public class MainActivity extends AppCompatActivity implements PostViewHolder.Listener, PostRepository.CallbackWithListPost{
 
     public static final String THEME = "my_theme";
     public static final String APP_PREFERENCES = "Settings";
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
     SharedPreferences sPref;
     public SharedPreferences mSettings;
     Toolbar toolbar;
+    private boolean isInInnerBrowser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +76,8 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
 
             adapter = new PostAdapter(diffUtilCallback, this);
             model= new ViewModelProvider(this).get(PostViewModel.class);
-
-            model.getAllPosts(this).observe(this, new Observer<PagedList<Post>>() {
-                @Override
-                public void onChanged(PagedList<Post> posts) {
-                    adapter.submitList(posts);
-                }
-            });
-
+            model.getSavedPostFromDB(this);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
             recyclerView.setAdapter(adapter);
 
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -119,6 +113,11 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        if (mSettings.contains(APP_PREFERENCES_INNER_BROWSER)){
+            isInInnerBrowser=mSettings.getBoolean(APP_PREFERENCES_INNER_BROWSER, false);
+            MenuItem menuItemInnerBrowser= menu.findItem(R.id.action_settings);
+            menuItemInnerBrowser.setChecked(isInInnerBrowser);
+        }
         return true;
     }
 
@@ -140,6 +139,14 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
                 yes_THEME = "NO";
                 saveText();
 
+            }
+            return true;
+            case R.id.action_inner_browser:
+            {
+                item.setChecked(!item.isChecked());
+                SharedPreferences.Editor editor = mSettings.edit();
+                editor.putBoolean(APP_PREFERENCES_INNER_BROWSER, item.isChecked());
+                editor.apply();
             }
             return true;
             case R.id.authorization:

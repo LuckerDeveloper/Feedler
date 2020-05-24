@@ -22,6 +22,13 @@
     </item>
 
     <item
+        android:id="@+id/action_inner_browser"
+        android:orderInCategory="100"
+        android:title="@string/InnerBrowser"
+        android:checkable="true"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/authorization"
         android:orderInCategory="100"
         android:title="@string/Auth"

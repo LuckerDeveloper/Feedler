@@ -1,6 +1,7 @@
 package com.example.feedler.Favorites;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.feedler.PagedList.PostAdapter;
 import com.example.feedler.PagedList.PostViewHolder;
 import com.example.feedler.Post;
+import com.example.feedler.PostActivity;
 import com.example.feedler.R;
 
 import java.util.List;
@@ -20,13 +22,11 @@ import java.util.List;
 public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     private List<Post> posts;
-    private PostAdapter.Listener listener;
     private final LayoutInflater mInflater;
     Context context;
 
     public FavoriteAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        this.listener= (PostAdapter.Listener) context;
         this.context= context;
     }
 
@@ -42,18 +42,16 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = posts.get(position);
         holder.bind(post);
+                if(context instanceof FavoriteActivity){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(context, PostActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
 
-        holder.favorite.setOnClickListener(v -> {
-            if (post.favorite) {
-                holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade_empty));
-                post.favorite = false;
-                listener.deleteFavorite(post);
-            }  else  {
-                holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade));
-                post.favorite= true;
-                listener.insertFavorite(post);
-            }
-        });
     }
 
     @Override
@@ -70,4 +68,5 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
         this.posts = posts;
         notifyDataSetChanged();
     }
+
 }

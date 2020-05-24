@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.feedler.AppExecutors;
 import com.example.feedler.MainActivity;
 import com.example.feedler.PagedList.PostAdapter;
+import com.example.feedler.PagedList.PostViewHolder;
 import com.example.feedler.Post;
 import com.example.feedler.PostRepository;
 import com.example.feedler.PostViewModel;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class FavoriteActivity extends AppCompatActivity implements PostAdapter.Listener , PostRepository.CallbackWithListPost {
+public class FavoriteActivity extends AppCompatActivity implements PostViewHolder.Listener, PostRepository.CallbackWithListPost {
 
     RecyclerView recyclerView;
     FavoriteAdapter adapter;
@@ -153,8 +154,14 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
 
     @Override
     public void onSuccess(Object result) {
-        posts= (List<Post>) result;
-        adapter.setPosts(posts);
+        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                posts= (List<Post>) result;
+                adapter.setPosts(posts);
+            }
+        });
+
     }
 
     @Override
