@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
 import com.example.feedler.Images.Image;
+import com.vk.sdk.api.model.VKApiCommunityFull;
 
 import java.text.DateFormat;
 import java.util.List;
@@ -17,7 +18,7 @@ public class Post {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    public int id;
+    public long id;
 
     @ColumnInfo(name = "group_name")
     private String groupName;
@@ -32,6 +33,10 @@ public class Post {
 
     @Ignore
     public List<Image> imageList;
+
+    public String link;
+
+    public String groupImageURL;
 
     public Post(@NonNull String groupName, long date, String postText) {
         this.groupName = groupName;

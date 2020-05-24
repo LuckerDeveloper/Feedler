@@ -1,6 +1,7 @@
 package com.example.feedler.Favorites;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.feedler.PagedList.PostAdapter;
 import com.example.feedler.PagedList.PostViewHolder;
 import com.example.feedler.Post;
+import com.example.feedler.PostActivity;
 import com.example.feedler.R;
 
 import java.util.List;
@@ -46,7 +48,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
         holder.favorite.setOnClickListener(v -> {
             if (post.favorite) {
                 holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade_empty));
-                post.favorite = false;
                 listener.deleteFavorite(post);
             }  else  {
                 holder.favorite.setBackground(holder.favorite.getContext().getDrawable(R.drawable.grade));
@@ -54,6 +55,17 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
                 listener.insertFavorite(post);
             }
         });
+
+        if(context instanceof FavoriteActivity){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(context, PostActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -70,4 +82,5 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
         this.posts = posts;
         notifyDataSetChanged();
     }
+
 }

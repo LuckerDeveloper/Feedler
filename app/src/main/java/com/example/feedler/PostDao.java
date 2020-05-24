@@ -27,7 +27,7 @@ public interface PostDao {
     Post getByParams(String groupName, long date , String textPost);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFavorite(Post post);
+    long insert(Post post);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<Post> list);

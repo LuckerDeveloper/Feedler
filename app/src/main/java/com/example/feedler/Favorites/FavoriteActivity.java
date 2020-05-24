@@ -95,8 +95,14 @@ public class FavoriteActivity extends AppCompatActivity implements PostAdapter.L
 
     @Override
     public void onSuccess(Object result) {
-        posts= (List<Post>) result;
-        adapter.setPosts(posts);
+        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                posts= (List<Post>) result;
+                adapter.setPosts(posts);
+            }
+        });
+
     }
 
     @Override

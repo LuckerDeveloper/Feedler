@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.DiffUtil;
 
 
 import com.example.feedler.Images.Image;
+import com.example.feedler.Images.ImageDao;
+import com.example.feedler.Images.ImageRoomDatabase;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -40,10 +42,12 @@ public class PostRepository  {
     }
 
     private PostRoomDatabase postRoomDatabase;
-    private List<Post> savedList;
+    private ImageRoomDatabase imageRoomDatabase;
+    private List<Post> postList;
 
     PostRepository(android.app.Application application) {
         postRoomDatabase= PostRoomDatabase.getDatabase(application);
+        imageRoomDatabase= ImageRoomDatabase.getDatabase(application);
     }
 
     //Получение постов с сети
@@ -62,7 +66,7 @@ public class PostRepository  {
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 try {
-                    final List<Post> list = new ArrayList<>();
+                    postList = new ArrayList<>();
                     JSONObject jsonObject = (JSONObject) response.json.get("response");
                     JSONArray jsonArrayPost = (JSONArray) jsonObject.get("items");
                     JSONArray jsonArrayGroup = (JSONArray) jsonObject.get("groups");
@@ -72,6 +76,7 @@ public class PostRepository  {
                         JSONObject jsonObjectPost = (JSONObject) jsonArrayPost.get(i);
 
                         List<Image> imageList = new ArrayList<>();
+                        String link=null;
 
                         if (jsonObjectPost.has("attachments")){
                             JSONArray jsonAttachments =(JSONArray) jsonObjectPost.get("attachments");
@@ -101,27 +106,11 @@ public class PostRepository  {
                                     Image image = new Image(smallSizeURL,width,height);
                                     imageList.add(image);
 
-
-//
-//
-//                                    String smallPhoto = null;
-//                                    if(jsonPhoto.has("photo_807")) {
-//                                        smallPhoto=jsonPhoto.getString("photo_807");
-//                                    } else if(jsonPhoto.has("photo_604")){
-//                                        smallPhoto=jsonPhoto.getString("photo_604");
-//                                    } else if(jsonPhoto.has("photo_1280")){
-//                                        smallPhoto=jsonPhoto.getString("photo_1280");
-//                                    }else if(jsonPhoto.has("photo_130")){
-//                                        smallPhoto=jsonPhoto.getString("photo_130");
-//                                    }else if(jsonPhoto.has("photo_2560")){
-//                                        smallPhoto=jsonPhoto.getString("photo_2560");
-//                                    }else if(jsonPhoto.has("photo_75")) {
-//                                        smallPhoto = jsonPhoto.getString("photo_75");
-//                                    }
-//                                    if(smallPhoto!=null){
-//                                        photoList.add(smallPhoto);
-//                                    }
-
+                                } else if(jsonAttachment.getString("type").equals("link")){
+                                    JSONObject jsonLink= (JSONObject)  jsonAttachment.get("link");
+                                    if(jsonLink.has("url")){
+                                        link=jsonLink.getString("url");
+                                    }
                                 }
                             }
                         }
@@ -129,6 +118,7 @@ public class PostRepository  {
                         String text = jsonObjectPost.optString("text");
                         int sourceId = jsonObjectPost.getInt("source_id");
                         String groupName = null;
+                        String groupImageURL=null;
                         long  dateInMillis=  jsonObjectPost.getLong("date");
 
                         //получение имени источника
@@ -139,6 +129,7 @@ public class PostRepository  {
                                     String firstName = profile.getString("first_name");
                                     String lastName= profile.getString("last_name");
                                     groupName = firstName + " "+ lastName;
+                                    groupImageURL=profile.getString("photo_100");
                                 }
                             }
                         } else {
@@ -146,39 +137,51 @@ public class PostRepository  {
                                 JSONObject group = (JSONObject) jsonArrayGroup.get(j);
                                 if (sourceId*(-1)==group.getInt("id")){
                                     groupName=group.getString("name");
+                                    groupImageURL=group.getString("photo_100");
                                 }
                             }
                         }
                         Post post=new Post(groupName, dateInMillis, text);
                         post.imageList=imageList;
-
-
-                        list.add(post);
+                        post.link=link;
+                        post.groupImageURL=groupImageURL;
+                        postList.add(post);
                     }
 
                     //сохранение первой партии постов в базу данных
                     if (startFrom==null){
-                        AppExecutors.getInstance().postDatabaseExrcutor().execute(new Runnable() {
+                        AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                List<Post> postList=new ArrayList<>();
-                                for (int i=0; i<list.size(); i++){
-                                    Post post=list.get(i);
+                                List<Post> savedPosts=postRoomDatabase.postDao().getSaved();
+                                for(Post post:savedPosts){
+                                    imageRoomDatabase.imageDao().deleteImagesByPostId(post.id);
+                                }
+                                postRoomDatabase.postDao().deleteSaved();
+                                for (int i=0; i<postList.size(); i++){
+                                    long postId;
+                                    Post post=postList.get(i);
                                     Post postFromDB=postRoomDatabase.postDao().getByParams(post.getGroupName(), post.getDate(), post.getPostText());
                                     if(postFromDB!=null&& postFromDB.favorite){
                                         post.favorite=true;
-                                        list.set(i , post);
+                                        postId=postFromDB.id;
                                     } else {
-                                        postList.add(post);
+                                        postId=postRoomDatabase.postDao().insert(post);
                                     }
+                                    for (Image image: post.imageList){
+                                        image.postId=postId;
+                                    }
+                                    imageRoomDatabase.imageDao().insertImages(post.imageList);
                                 }
-                                postRoomDatabase.postDao().deleteSaved();
-                                postRoomDatabase.postDao().insertAll(postList);
+                                final String nextFrom = jsonObject.optString("next_from");
+                                callback.onResult(nextFrom, postList, null);
                             }
                         });
+                    } else {
+                        final String nextFrom = jsonObject.optString("next_from");
+                        callback.onResult(nextFrom, postList, null);
                     }
-                    final String nextFrom = jsonObject.optString("next_from");
-                    callback.onResult(nextFrom, list, null);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     callback.onResult(startFrom, null , e);
@@ -190,29 +193,49 @@ public class PostRepository  {
                 super.onError(error);
                 if (startFrom==null){
                     CallbackWithListPost callbackWithListPost = (CallbackWithListPost) context;
-                    AppExecutors.getInstance().postDatabaseExrcutor().execute(new Runnable() {
+                    AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
                         @Override
                         public void run() {
-                            savedList=postRoomDatabase.postDao().getSaved();
-                            if (savedList==null) {
+                            postList=postRoomDatabase.postDao().getSaved();
+                            for (Post post:postList){
+                                List<Image> imageList = getImageList(post.id);
+                                post.imageList=imageList;
+                            }
+                            if (postList==null) {
                                 callbackWithListPost.onFail();
                             } else {
-                                callbackWithListPost.onSuccess(savedList);
+                                callbackWithListPost.onSuccess(postList);
                             }
                         }
                     });
                 }
+            }
+
+            @Override
+            public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
+                super.onProgress(progressType, bytesLoaded, bytesTotal);
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
             }
         });
     }
 
     void getFavoritePost(Context context){
         CallbackWithListPost favoriteCallBack= (CallbackWithListPost) context;
-        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+        AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 List<Post> posts= postDao.getFavorite();
+                for (Post post: posts){
+                    List<Image> imageList = imageRoomDatabase.imageDao().getByPostId(post.id);
+                    post.imageList=imageList;
+                    Log.e("repo getfavorite", ""+imageList.size() );
+                }
                 if (posts.size()>0){
                     favoriteCallBack.onSuccess(posts);
                 } else{
@@ -224,49 +247,57 @@ public class PostRepository  {
 
 
     public void insertFavorite(Post post){
-        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+        Log.e("postRepo", "insert Favorite");
+        AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 Post postFromDb=postDao.getByParams(post.getGroupName() , post.getDate(), post.getPostText());
                 if (postFromDb!=null){
-                    Log.e("insertFavorite" ,""+postFromDb.getGroupName());
-                    Log.e("insertFavorite" ,""+postFromDb.getDate());
-                    Log.e("insertFavorite" ,""+postFromDb.getPostText());
-                    int flag=postDao.deletePost(postFromDb);
-                    Log.e("insertFavorite" ,""+flag);
+                    int postIdFromDB=postDao.deletePost(postFromDb);
+                    imageRoomDatabase.imageDao().deleteImagesByPostId(postIdFromDB);
                 }
-                postDao.insertFavorite(post);
-                Log.e("insertFavorite" ,"size="+postDao.getAll().size());
+                long postId=postDao.insert(post);
+                for (Image image: post.imageList){
+                    image.postId=postId;
+                }
+                imageRoomDatabase.imageDao().insertImages(post.imageList);
+                Log.e("repo insertFavorite", ""+post.imageList.size() );
             }
         });
     }
 
     public void deleteFavorite(Post post){
-        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+        Log.e("postRepo", "delete Favorite");
+        AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 Post postFromDb=postDao.getByParams(post.getGroupName() , post.getDate(), post.getPostText());
                 if (postFromDb!=null){
                     int flag=postDao.deletePost(postFromDb);
-                    Log.e("deleteFavorite" ,"deleted="+flag);
                 }
                 post.favorite=false;
-                postDao.insertFavorite(post);
-                Log.e("deleteFavorite" ,"size="+postDao.getAll().size());
+                postDao.insert(post);
             }
         });
     }
 
     public void deleteFavoriteAll(){
-        AppExecutors.getInstance().favoriteDatabaseExrcutor().execute(new Runnable() {
+        AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 postDao.deleteFavorites();
             }
         });
+    }
+
+    private List<Image> getImageList(long postId){
+        ImageDao imageDao = imageRoomDatabase.imageDao();
+        List<Image> imageList = imageDao.getByPostId(postId);
+        Log.e("postRepo", "getImageList size="+imageList.size());
+        return imageDao.getByPostId(postId);
     }
 
 

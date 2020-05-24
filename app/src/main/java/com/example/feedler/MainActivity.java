@@ -9,12 +9,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,8 +42,9 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
     RecyclerView recyclerView;
     PostAdapter adapter;
     PostRepository.PostDiffUtilCallback diffUtilCallback;
-    PostViewModel model;
-    public SharedPreferences mSettings;
+    public PostViewModel model;
+    private SharedPreferences mSettings;
+    boolean isInInnerBrowser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
             });
 
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
             recyclerView.setAdapter(adapter);
 
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -92,41 +94,44 @@ public class MainActivity extends AppCompatActivity implements PostAdapter.Liste
                     } , 500);
                 }
             });
-
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        if (mSettings.contains(APP_PREFERENCES_INNER_BROWSER)){
+            isInInnerBrowser=mSettings.getBoolean(APP_PREFERENCES_INNER_BROWSER, false);
+            MenuItem menuItemInnerBrowser= menu.findItem(R.id.action_settings);
+            menuItemInnerBrowser.setChecked(isInInnerBrowser);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_favorite:
-            {
-                 Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
-                  startActivity(intent);
+            case R.id.action_favorite: {
+                Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
+                startActivity(intent);
             }
             return true;
-            case R.id.action_settings:
-            {
+            case R.id.action_settings: {
                 item.setChecked(!item.isChecked());
-
-
+                SharedPreferences.Editor editor = mSettings.edit();
+                editor.putBoolean(APP_PREFERENCES_INNER_BROWSER, item.isChecked());
+                editor.apply();
                 //меню настроек
             }
             return true;
-            case R.id.authorization:
-            {
+            case R.id.authorization: {
                 //меню авторизации
+                return true;
             }
-            case R.id.exit:
-            {
+            case R.id.exit: {
                 VKSdk.logout();
                 Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
                 startActivity(intent);

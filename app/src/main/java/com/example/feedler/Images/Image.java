@@ -1,12 +1,17 @@
 package com.example.feedler.Images;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "image_table")
 public class Image {
 
-    int id;
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
     public String smallSizeURL;
 
-    public int postId;
+    public long postId;
 
     public int width;
 

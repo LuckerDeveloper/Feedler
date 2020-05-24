@@ -19,6 +19,7 @@ public class PostViewModel extends AndroidViewModel   {
 
     private PostRepository postRepository;
     private LiveData<PagedList<Post>> allPosts;
+    public static Post postForTransmission;
 
     public PostViewModel (Application application ) {
         super(application);
