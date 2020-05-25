@@ -85,28 +85,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
        } else {
            postText.setText(post.getPostText());
        }
-
-       postText= Textoo
-               .config(postText)
-               .linkifyWebUrls()
-               .addLinksHandler(new LinksHandler() {
-                   @Override
-                   public boolean onClick(View view, String url) {
-                       SharedPreferences mSettings=context.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
-                       boolean isInInnerBrowser=false;
-                       if (mSettings.contains(MainActivity.APP_PREFERENCES_INNER_BROWSER)){
-                           isInInnerBrowser=mSettings.getBoolean(MainActivity.APP_PREFERENCES_INNER_BROWSER, false);
-                       }
-                       if (isInInnerBrowser){
-                           Intent intent = new Intent(context, WebActivity.class);
-                           intent.putExtra(WebActivity.URLKEY, url);
-                           context.startActivity(intent);
-                       }
-                       return isInInnerBrowser;
-                   }
-               })
-               .apply();
-
         dataText.setText(dateToString(post.getDate()));
         groupName.setText(post.getGroupName());
 

@@ -1,6 +1,7 @@
 package com.example.feedler;
 
 import android.content.Intent;
+import android.util.Log;
 
 
 import com.vk.sdk.VKAccessToken;
@@ -8,7 +9,6 @@ import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
 public class Application extends android.app.Application {
-
 
     VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
@@ -27,4 +27,5 @@ public class Application extends android.app.Application {
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
     }
+
 }
