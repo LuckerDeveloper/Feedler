@@ -186,11 +186,7 @@ public class PostRepository  {
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 List<Post> posts= postDao.getFavoriteSearching("%"+search+"%");
-                if (posts.size()>0){
-                    favoriteSearchCallBack.onSuccess(posts);
-                } else{
-                    favoriteSearchCallBack.onFail();
-                }
+                favoriteSearchCallBack.onSuccess(posts);
             }
         });
     }
@@ -212,7 +208,7 @@ public class PostRepository  {
                     image.postId=postId;
                 }
                 imageRoomDatabase.imageDao().insertImages(post.imageList);
-                Log.e("repo insertFavorite", ""+post.imageList.size() );
+                Log.e("repo insertFavorite", ""+ post.imageList.size() );
             }
         });
     }
