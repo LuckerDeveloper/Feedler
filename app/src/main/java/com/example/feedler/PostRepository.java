@@ -245,7 +245,7 @@ public class PostRepository  {
                 List<Post> favoritePostList =postDao.getFavorite();
                 for(Post post:favoritePostList){
                     long deletedPostId=postDao.deletePost(post);
-//                    imageDao.deleteImagesByPostId(deletedPostId);
+                    imageDao.deleteImagesByPostId(deletedPostId);
 
                     post.favorite=false;
                     long postId=postDao.insert(post);
