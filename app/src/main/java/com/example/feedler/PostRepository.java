@@ -30,6 +30,8 @@ import java.util.Map;
 
 public class PostRepository  {
 
+
+
     public interface CallbackWithListPost<T> {
 
         void onSuccess(T result);
@@ -242,8 +244,7 @@ public class PostRepository  {
     private List<Image> getImageList(long postId){
         ImageDao imageDao = imageRoomDatabase.imageDao();
         List<Image> imageList = imageDao.getByPostId(postId);
-        Log.e("postRepo", "getImageList size="+imageList.size());
-        return imageDao.getByPostId(postId);
+        return imageList;
     }
 
     private Image getImageFromJson(JSONObject jsonPhoto) throws JSONException {
@@ -318,6 +319,16 @@ public class PostRepository  {
                 } else {
                     callbackWithListPost.onSuccess(postList);
                 }
+            }
+        });
+    }
+
+    public void cleanDB(){
+        AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                postRoomDatabase.postDao().deleteAll();
+                imageRoomDatabase.imageDao().deleteAll();
             }
         });
     }

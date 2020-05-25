@@ -44,4 +44,7 @@ public interface PostDao {
     @Delete
     int deletePost(Post post);
 
+    @Query("DELETE FROM post_table")
+    void deleteAll();
+
 }

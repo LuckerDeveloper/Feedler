@@ -49,7 +49,7 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_activity_layout);
 
-
+        Log.e("PostActivity", "OnClick");
 
         model=new ViewModelProvider(this).get(PostViewModel.class);
         Post post = PostViewModel.postForTransmission;
@@ -125,10 +125,8 @@ public class PostActivity extends AppCompatActivity {
 
 
         if (post.favorite){
-            Log.e("PostActivity", "OnClick");
             favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade));
         } else {
-            Log.e("PostActivity", "OnClick");
             favorite.setBackground(favorite.getContext().getDrawable(R.drawable.grade_empty));
         }
 

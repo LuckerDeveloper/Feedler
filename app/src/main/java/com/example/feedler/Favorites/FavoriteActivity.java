@@ -99,13 +99,9 @@ public class FavoriteActivity extends AppCompatActivity implements PostViewHolde
                         recyclerView.setAdapter(adapter);
                         adapter.setPosts(posts);
                         recyclerView.setLayoutManager(new LinearLayoutManager(FavoriteActivity.this));
-
                     }
                 }.start();
-
             }
-
-
 
             @Override
             public void afterTextChanged(Editable s) {

@@ -75,6 +75,11 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        
+    }
 
     public void onClickTwitter(View view) {
         Toast.makeText(this, "Данная функция находится в разработке", Toast.LENGTH_LONG).show();

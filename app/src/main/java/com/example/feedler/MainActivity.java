@@ -76,7 +76,14 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
 
             adapter = new PostAdapter(diffUtilCallback, this);
             model= new ViewModelProvider(this).get(PostViewModel.class);
-            model.getSavedPostFromDB(this);
+
+            model.getAllPosts(MainActivity.this).observe(MainActivity.this, new Observer<PagedList<Post>>() {
+                @Override
+                public void onChanged(PagedList<Post> posts) {
+                    adapter.submitList(posts);
+                }
+            });
+
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
 
@@ -152,13 +159,16 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
             case R.id.authorization:
             {
                 Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
             return true;
             case R.id.exit:
             {
                 VKSdk.logout();
+                model.cleanDB();
                 Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
             default:

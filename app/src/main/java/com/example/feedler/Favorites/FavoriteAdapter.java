@@ -15,6 +15,7 @@ import com.example.feedler.PagedList.PostAdapter;
 import com.example.feedler.PagedList.PostViewHolder;
 import com.example.feedler.Post;
 import com.example.feedler.PostActivity;
+import com.example.feedler.PostViewModel;
 import com.example.feedler.R;
 
 import java.util.List;
@@ -51,6 +52,15 @@ public class FavoriteAdapter extends RecyclerView.Adapter<PostViewHolder> {
                 }
             });
         }
+
+        holder.itemView.findViewById(R.id.windowsMain).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PostViewModel.postForTransmission=post;
+                Intent intent= new Intent(context, PostActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
     }
 

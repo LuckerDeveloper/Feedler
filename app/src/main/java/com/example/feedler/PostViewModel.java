@@ -54,4 +54,6 @@ public class PostViewModel extends AndroidViewModel   {
 
     public void deleteFavoriteAll(){postRepository.deleteFavoriteAll();}
 
+    public void cleanDB(){postRepository.cleanDB();}
+
 }
