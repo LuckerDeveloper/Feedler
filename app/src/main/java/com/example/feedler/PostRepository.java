@@ -170,7 +170,6 @@ public class PostRepository  {
                 for (Post post: posts){
                     List<Image> imageList = imageRoomDatabase.imageDao().getByPostId(post.id);
                     post.imageList=imageList;
-                    Log.e("repo getfavorite", ""+imageList.size() );
                 }
                 if (posts.size()>0){
                     favoriteCallBack.onSuccess(posts);
@@ -195,7 +194,6 @@ public class PostRepository  {
 
 
     public void insertFavorite(Post post){
-        Log.e("postRepo", "insert Favorite");
         AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -216,17 +214,24 @@ public class PostRepository  {
     }
 
     public void deleteFavorite(Post post){
-        Log.e("postRepo", "delete Favorite");
         AppExecutors.getInstance().postDatabaseExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 Post postFromDb=postDao.getByParams(post.getGroupName() , post.getDate(), post.getPostText());
                 if (postFromDb!=null){
-                    int flag=postDao.deletePost(postFromDb);
+                    int postIdFromDB=postDao.deletePost(postFromDb);
+                    post.favorite=false;
+                    long newPostId = postDao.insert(post);
+                    imageRoomDatabase.imageDao().deleteImagesByPostId(postIdFromDB);
+                    List<Image> imageList=post.imageList;
+                    if(imageList!=null){
+                        for(Image image:imageList){
+                            image.postId=newPostId;
+                        }
+                        imageRoomDatabase.imageDao().insertImages(imageList);
+                    }
                 }
-                post.favorite=false;
-                postDao.insert(post);
             }
         });
     }
@@ -236,7 +241,23 @@ public class PostRepository  {
             @Override
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
-                postDao.deleteFavorites();
+                ImageDao imageDao = imageRoomDatabase.imageDao();
+                List<Post> favoritePostList =postDao.getFavorite();
+                for(Post post:favoritePostList){
+                    long deletedPostId=postDao.deletePost(post);
+//                    imageDao.deleteImagesByPostId(deletedPostId);
+
+                    post.favorite=false;
+                    long postId=postDao.insert(post);
+                    List<Image> imageList=post.imageList;
+                    if(imageList!=null){
+                        for(Image image:imageList){
+                            image.postId=postId;
+                        }
+                        imageDao.insertImages(imageList);
+                    }
+
+                }
             }
         });
     }

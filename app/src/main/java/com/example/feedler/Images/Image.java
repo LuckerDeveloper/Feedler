@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 public class Image {
 
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public long id;
 
     public String smallSizeURL;
 
