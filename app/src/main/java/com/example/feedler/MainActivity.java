@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
     public static final String THEME = "my_theme";
     public static final String APP_PREFERENCES = "Settings";
     public static final String APP_PREFERENCES_INNER_BROWSER = "APP_PREFERENCES_INNER_BROWSER";
+    public static final String ACCESS_TO_FEED="ACCESS_TO_FEED";
     RecyclerView recyclerView;
     PostAdapter adapter;
     PostRepository.PostDiffUtilCallback diffUtilCallback;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
 
         }
         favButon = findViewById(R.id.favoriteFeedMAIN);
+
         favButon.setOnClickListener(v->{
             Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
             startActivity(intent);
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
         inflater.inflate(R.menu.menu_main, menu);
         if (mSettings.contains(APP_PREFERENCES_INNER_BROWSER)){
             isInInnerBrowser=mSettings.getBoolean(APP_PREFERENCES_INNER_BROWSER, false);
-            MenuItem menuItemInnerBrowser= menu.findItem(R.id.action_settings);
+            MenuItem menuItemInnerBrowser= menu.findItem(R.id.action_inner_browser);
             menuItemInnerBrowser.setChecked(isInInnerBrowser);
         }
         return true;
@@ -160,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
             {
                 Intent intent = new Intent(MainActivity.this, AuthorizationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra(ACCESS_TO_FEED, true);
                 startActivity(intent);
             }
             return true;
@@ -203,9 +206,11 @@ public class MainActivity extends AppCompatActivity implements PostViewHolder.Li
                 List<Post> postList= (List<Post>) result;
                 recyclerView.setAdapter(favoriteAdapter);
                 favoriteAdapter.setPosts(postList);
+                Toast.makeText(getApplicationContext(),
+                        "Не удалось обновить данные. Проверьте подключение к интернету",
+                        Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     @Override

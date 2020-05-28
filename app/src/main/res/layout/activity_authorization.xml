@@ -45,6 +45,18 @@
             android:onClick="onClickTwitter"
             />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            android:id="@+id/news_feed_button"
+            android:layout_marginBottom="20dp"
+            android:text="@string/buttonList"
+            android:background="@color/PetronasColor"
+            android:textColor="@color/Text"
+            android:onClick="onClickButtonList"
+            />
+
     </LinearLayout>
 
 </LinearLayout>

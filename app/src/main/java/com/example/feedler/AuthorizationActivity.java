@@ -26,8 +26,22 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_authorization);
 
         Button authButtonVK = findViewById(R.id.authButtonVK);
+        Button authButtonTwitter=findViewById(R.id.authButtonTwitter);
+        Button news_feed_button= findViewById(R.id.news_feed_button);
 
         authButtonVK.setOnClickListener(this);
+        authButtonTwitter.setOnClickListener(this);
+        news_feed_button.setOnClickListener(this);
+
+        Bundle arguments = getIntent().getExtras();
+        if (arguments!=null){
+            boolean visibleNewsFeedButton= arguments.getBoolean(MainActivity.ACCESS_TO_FEED, false);
+            if(visibleNewsFeedButton) {
+                news_feed_button.setVisibility(View.VISIBLE);
+            }
+        }
+
+
 
 
 
@@ -44,9 +58,13 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
                 break;
             }
             case R.id.authButtonTwitter: {
-                Log.e("AuthActivity", "i am here");
                 Toast.makeText(this, "Данная функция находится в разработке", Toast.LENGTH_LONG).show();
                 break;
+            }
+            case R.id.news_feed_button: {
+                Intent intent =new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         }
 
@@ -81,7 +99,5 @@ public class AuthorizationActivity extends AppCompatActivity implements View.OnC
 
     }
 
-    public void onClickTwitter(View view) {
-        Toast.makeText(this, "Данная функция находится в разработке", Toast.LENGTH_LONG).show();
-    }
+
 }

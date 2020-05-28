@@ -76,6 +76,7 @@ public class PostRepository  {
 
                     for (int i = 0; i < jsonArrayPost.length(); i++) {
                         JSONObject jsonObjectPost = (JSONObject) jsonArrayPost.get(i);
+                        JSONObject jsonObjectLikes = (JSONObject) jsonObjectPost.get("likes");
 
                         List<Image> imageList = new ArrayList<>();
                         String text = jsonObjectPost.optString("text");
