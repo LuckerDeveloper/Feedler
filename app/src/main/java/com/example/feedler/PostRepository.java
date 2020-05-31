@@ -62,10 +62,11 @@ public class PostRepository  {
             paramsMap.put("start_from", startFrom);
         }
         final VKParameters params = new VKParameters(paramsMap);
-        VKRequest request = new VKRequest("newsfeed.get", params); //Запрос с фильтром params
+        VKRequest request = new VKRequest("newsfeed.get", params);
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
+
                 super.onComplete(response);
                 try {
                     postList = new ArrayList<>();
@@ -151,6 +152,7 @@ public class PostRepository  {
                     callback.onResult(startFrom, null , e);
                 }
             }
+            //Получаем данные в виде JSONObject, преобразуем к List<Post> и отправляем в MyPositionalDataSource
             @Override
             public void onError(VKError error) {
                 super.onError(error);
@@ -158,8 +160,10 @@ public class PostRepository  {
                     getSavedPostFromDatabase(context);
                 }
             }
+            //Получаем посты с базы данных и отправляем в MainActivity
         });
     }
+
 
     void getFavoritePost(Context context){
         CallbackWithListPost favoriteCallBack= (CallbackWithListPost) context;
@@ -188,6 +192,10 @@ public class PostRepository  {
             public void run() {
                 PostDao postDao = postRoomDatabase.postDao();
                 List<Post> posts= postDao.getFavoriteSearching("%"+search+"%");
+                for (Post post: posts){
+                    List<Image> imageList = imageRoomDatabase.imageDao().getByPostId(post.id);
+                    post.imageList=imageList;
+                }
                 favoriteSearchCallBack.onSuccess(posts);
             }
         });

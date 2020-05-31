@@ -107,32 +107,15 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:orientation="horizontal"
+        android:gravity="right"
         android:layout_marginBottom="15dp"
         >
 
-<!--        <TextView-->
-<!--            android:id="@+id/like"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@drawable/favorite" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/likesCount"-->
-<!--            android:layout_width="50dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@drawable/circle"-->
-<!--            android:text="1000"-->
-<!--            android:textStyle="normal|bold|italic"-->
-<!--            android:paddingTop="4dp"-->
-<!--            android:layout_marginLeft="10dp"-->
-<!--            android:textColor="@color/Text"-->
-<!--            />-->
-
         <TextView
             android:id="@+id/share"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:drawableLeft="@drawable/ic_share_black_24dp"
+            android:background="@drawable/ic_share_black_24dp"
             />
 
     </LinearLayout>
